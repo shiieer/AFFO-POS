@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Database & local data
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Generated static files (QR codes uploaded locally during dev)
+static/qr_codes/*.png
+
+# Logs
+*.log
+
+# mypy / ruff / pyright
+.mypy_cache/
+.ruff_cache/
+.pytype/
