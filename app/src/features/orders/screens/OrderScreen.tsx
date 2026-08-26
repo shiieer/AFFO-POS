@@ -10,7 +10,11 @@ import OrderStatusFilter from "../components/OrderStatusFilter";
 import { useOrders } from "../hooks/useOrders";
 import OrderCard from "../components/OrderCard";
 
-export default function OrderScreen() {
+type Props = {
+	onOpenOrder: (orderId: number) => void;
+};
+
+export default function OrderScreen({ onOpenOrder }: Props) {
 	const {
 		filters,
 		selectedFilter,
@@ -43,6 +47,7 @@ export default function OrderScreen() {
 				</View>
 			) : (
 				<FlatList
+					className="flex-1"
 					data={orders}
 					keyExtractor={(item) => String(item.id)}
 					contentContainerClassName="px-4 pb-6"
@@ -61,6 +66,7 @@ export default function OrderScreen() {
 					renderItem={({ item }) => (
 						<OrderCard
 							order={item}
+							onPress={() => onOpenOrder(item.id)}
 							onStartPreparing={startPreparing}
 							onPrint={printOrder}
 							onMarkReady={markReady}

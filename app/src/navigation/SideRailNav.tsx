@@ -1,13 +1,13 @@
 import { JSX, useState } from "react";
 import { View, Pressable, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
-import { OrderScreen } from "@/features/orders";
+import { OrdersNavigator } from "@/features/orders";
 import { NewOrderScreen } from "@/features/new-order";
-import { MenuScreen } from "@/features/menu";
+import { MenuNavigator } from "@/features/menu";
 import { ReportsScreen } from "@/features/reports";
-import { MoreScreen } from "@/features/more";
+import { MoreNavigator } from "@/features/more";
 import { SideTabKey } from "./types";
 
 const TABS: {
@@ -19,7 +19,7 @@ const TABS: {
 		key: "Orders",
 		label: "Orders",
 		icon: () => (
-			<MaterialCommunityIcons name="receipt" size={22} color="#111827" />
+			<Ionicons name="receipt-outline" size={22} color="#111827" />
 		),
 	},
 	{
@@ -55,11 +55,11 @@ const TABS: {
 ];
 
 const SCREEN_MAP = {
-	Orders: OrderScreen,
+	Orders: OrdersNavigator,
 	NewOrder: NewOrderScreen,
-	Menu: MenuScreen,
+	Menu: MenuNavigator,
 	Reports: ReportsScreen,
-	More: MoreScreen,
+	More: MoreNavigator,
 };
 
 export default function SideRailNav() {

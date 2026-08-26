@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ORDER_FILTERS } from "../constants/filters";
 import { Order, OrderFilter } from "../types/order";
 import { fetchOrdersApi, updateOrderStatusApi } from "@/services/api/order.api";
+import { getErrorMessage } from "@/utils";
 import { mapFilterToApiStatus, mapOrder } from "../utils/mapOrder";
 
 export function useOrders() {
@@ -25,13 +26,10 @@ export function useOrders() {
 					active_only: selectedFilter === "All",
 				});
 
-				setOrders(data.map(mapOrder));
+				const list = Array.isArray(data) ? data : [];
+				setOrders(list.map(mapOrder));
 			} catch (err) {
-				setError(
-					err instanceof Error
-						? err.message
-						: "Failed to load orders",
-				);
+				setError(getErrorMessage(err, "Failed to load orders"));
 			} finally {
 				setLoading(false);
 				setRefreshing(false);

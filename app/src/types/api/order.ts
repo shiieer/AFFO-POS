@@ -3,7 +3,7 @@ export type ApiOrderStatus =
 	| "preparing"
 	| "ready"
 	| "served"
-	| "canceled";
+	| "cancelled";
 
 export type OrderItemApi = {
 	id: number;
@@ -45,4 +45,9 @@ export type CreateOrderPayload = {
 
 export type UpdateOrderStatusPayload = {
 	status: ApiOrderStatus;
+};
+
+export type UpdateOrderPaymentPayload = {
+	payment_method: "cash" | "qris" | "other";
+	is_paid: boolean;
 };

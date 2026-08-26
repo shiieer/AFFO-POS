@@ -6,16 +6,19 @@ import ProductCard from "./ProductCard";
 
 type Props = {
 	items: MenuItem[];
-	selectedItemId: number | null;
-	onPressItem: (item: MenuItem) => void;
+	getItemQuantity: (menuItemId: number) => number;
+	onIncreaseItem: (item: MenuItem) => void;
+	onDecreaseItem: (item: MenuItem) => void;
 };
 
 export default function ProductGrid({
 	items,
-	selectedItemId,
-	onPressItem,
+	getItemQuantity,
+	onIncreaseItem,
+	onDecreaseItem,
 }: Props) {
 	const { numColumns, cardWidth } = useGridColumns();
+
 	return (
 		<FlatList
 			data={items}
@@ -31,8 +34,9 @@ export default function ProductGrid({
 				<ProductCard
 					item={item}
 					cardWidth={cardWidth}
-					selected={selectedItemId === item.id}
-					onPress={onPressItem}
+					quantity={getItemQuantity(item.id)}
+					onIncrease={onIncreaseItem}
+					onDecrease={onDecreaseItem}
 				/>
 			)}
 		/>

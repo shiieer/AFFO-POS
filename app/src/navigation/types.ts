@@ -7,3 +7,8 @@ export type RootTabParamList = {
 };
 
 export type SideTabKey = keyof RootTabParamList;
+
+export type OrdersStackParamList = {
+	OrderList: undefined;
+	OrderDetail: { orderId: number };
+};

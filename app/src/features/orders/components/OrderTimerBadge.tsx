@@ -1,15 +1,10 @@
 import { View, Text } from "react-native";
+import { formatElapsedTime } from "@/utils";
 
 type Props = {
 	elapsedSeconds: number;
 	isUrgent?: Boolean;
 };
-
-function formatElapsedTime(totalSecond: number) {
-	const minutes = Math.floor(totalSecond / 60);
-	const seconds = totalSecond % 60;
-	return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-}
 
 export default function OrderTimerBadge({
 	elapsedSeconds,

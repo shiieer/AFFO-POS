@@ -1,12 +1,12 @@
 import { createBottomTabNavigator } from "expo-router/js-tabs";
-import { Text, View } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Text } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import { NewOrderScreen } from "@/features/new-order";
-import { OrderScreen } from "@/features/orders";
-import { MenuScreen } from "@/features/menu";
+import { OrdersNavigator } from "@/features/orders";
+import { MenuNavigator } from "@/features/menu";
 import { ReportsScreen } from "@/features/reports";
-import { MoreScreen } from "@/features/more";
+import { MoreNavigator } from "@/features/more";
 import { RootTabParamList } from "./types";
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -34,11 +34,11 @@ export default function BottomTabNav() {
 		>
 			<Tab.Screen
 				name="Orders"
-				component={OrderScreen}
+				component={OrdersNavigator}
 				options={{
 					tabBarIcon: ({ color, size }) => (
-						<MaterialCommunityIcons
-							name="receipt"
+						<Ionicons
+							name="receipt-outline"
 							color={color}
 							size={size}
 						/>
@@ -69,7 +69,7 @@ export default function BottomTabNav() {
 
 			<Tab.Screen
 				name="Menu"
-				component={MenuScreen}
+				component={MenuNavigator}
 				options={{
 					tabBarIcon: ({ color, size }) => (
 						<Ionicons
@@ -97,7 +97,7 @@ export default function BottomTabNav() {
 
 			<Tab.Screen
 				name="More"
-				component={MoreScreen}
+				component={MoreNavigator}
 				options={{
 					tabBarIcon: ({ color, size }) => (
 						<Ionicons

@@ -1,15 +1,12 @@
 import { OrderApi, ApiOrderStatus } from "@/types/api/order";
-import { Order, OrderStatus } from "../types/order";
+import { getElapsedSeconds } from "@/utils";
+import { Order, OrderFilter, OrderStatus } from "../types/order";
 
 function mapStatus(status: ApiOrderStatus): OrderStatus {
 	if (status === "pending") return "new";
 	if (status === "preparing") return "preparing";
+	if (status === "cancelled") return "cancelled";
 	return "ready";
-}
-
-function getElapsedSeconds(createdAt: string) {
-	const created = new Date(createdAt).getTime();
-	return Math.max(0, Math.floor((Date.now() - created) / 1000));
 }
 
 export function mapOrder(api: OrderApi): Order {
@@ -25,20 +22,25 @@ export function mapOrder(api: OrderApi): Order {
 		elapsedSeconds,
 		isUrgent: elapsedSeconds >= 300,
 		accentColor: api.table_id ? "blue" : "teal",
-		items: api.items.map((item) => ({
+		items: (api.items ?? []).map((item) => ({
 			id: item.id,
 			quantity: item.quantity,
-			name: item.menu_item_name ?? "Unknow item",
+			name: item.menu_item_name ?? "Unknown item",
 			note: item.notes ?? undefined,
+			unitPrice: item.unit_price ?? 0,
+			subtotal: item.subtotal ?? 0,
 		})),
+		createdAt: api.created_at,
+		totalAmount: api.total_amount ?? 0,
 	};
 }
 
 export function mapFilterToApiStatus(
-	filter: "All" | "New" | "Preparing" | "Ready",
+	filter: OrderFilter,
 ): ApiOrderStatus | undefined {
 	if (filter === "New") return "pending";
 	if (filter === "Preparing") return "preparing";
 	if (filter === "Ready") return "ready";
+	if (filter === "Cancelled") return "cancelled";
 	return undefined;
 }

@@ -1,38 +1,26 @@
-import { useEffect, useState } from "react";
-import { DEV_LOGIN } from "@/constants/api";
-import { loginApi } from "@/services/api/auth.api";
+import { useCallback, useEffect, useState } from "react";
 import { getToken, saveToken } from "@/services/storage/tokenStorage";
+import { onUnauthorized } from "@/services/auth/session";
 
 export function useBootstrapAuth() {
 	const [ready, setReady] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [authenticated, setAuthenticated] = useState(false);
+
+	const refreshAuth = useCallback(async () => {
+		const token = await getToken();
+		setAuthenticated(!!token);
+		setReady(true);
+	}, []);
 
 	useEffect(() => {
-		let mounted = true;
+		refreshAuth();
+	}, [refreshAuth]);
 
-		async function bootsrap() {
-			try {
-				const existing = await getToken();
-				if (!existing) {
-					const result = await loginApi(DEV_LOGIN);
-					await saveToken(result.access_token);
-				}
-				if (mounted) setReady(true);
-			} catch (err) {
-				if (mounted) {
-					setError(
-						err instanceof Error
-							? err.message
-							: "Failed to authenticate",
-					);
-				}
-			}
-		}
-
-		bootsrap();
-		return () => {
-			mounted = false;
-		};
+	useEffect(() => {
+		return onUnauthorized(() => {
+			setAuthenticated(false);
+		});
 	}, []);
-	return { ready, error };
+
+	return { ready, authenticated, refreshAuth };
 }

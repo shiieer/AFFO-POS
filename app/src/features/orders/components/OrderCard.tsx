@@ -1,12 +1,14 @@
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Order } from "../types/order";
 import OrderStatusBadge from "./OrderStatusBadge";
 import OrderTimerBadge from "./OrderTimerBadge";
 import OrderItemList from "./OrderItemList";
 import OrderActionButtons from "./OrderActionButtons";
+import KitchenStatusBadge from "./KitchenStatusBadge";
 
 type Props = {
 	order: Order;
+	onPress: () => void;
 	onStartPreparing: (orderId: number) => void;
 	onPrint: (orderId: number) => void;
 	onMarkReady: (orderId: number) => void;
@@ -19,6 +21,7 @@ const ACCENT_COLORS = {
 
 export default function OrderCard({
 	order,
+	onPress,
 	onStartPreparing,
 	onPrint,
 	onMarkReady,
@@ -26,7 +29,10 @@ export default function OrderCard({
 	const showTimer = order.status !== "ready";
 
 	return (
-		<View className="bg-white rounded-2xl border border-brand-border overflow-hidden mb-4">
+		<Pressable
+			onPress={onPress}
+			className="bg-white rounded-2xl border border-brand-border overflow-hidden mb-4"
+		>
 			{order.accentColor ? (
 				<View className={`h-1 ${ACCENT_COLORS[order.accentColor]}`} />
 			) : null}
@@ -44,8 +50,10 @@ export default function OrderCard({
 
 					<View className="items-end gap-2">
 						<OrderStatusBadge status={order.paymentStatus} />
+						<KitchenStatusBadge status={order.status} />
 
-						{showTimer ? (
+						{order.status !== "ready" &&
+						order.status !== "cancelled" ? (
 							<OrderTimerBadge
 								elapsedSeconds={order.elapsedSeconds}
 								isUrgent={order.isUrgent}
@@ -56,15 +64,17 @@ export default function OrderCard({
 
 				<OrderItemList items={order.items} />
 
-				<View className="mt-4">
-					<OrderActionButtons
-						status={order.status}
-						onStartPreparing={() => onStartPreparing(order.id)}
-						onPrint={() => onPrint(order.id)}
-						onMarkReady={() => onMarkReady(order.id)}
-					/>
-				</View>
+				{order.status !== "cancelled" ? (
+					<View className="mt-4">
+						<OrderActionButtons
+							status={order.status}
+							onStartPreparing={() => onStartPreparing(order.id)}
+							onPrint={() => onPrint(order.id)}
+							onMarkReady={() => onMarkReady(order.id)}
+						/>
+					</View>
+				) : null}
 			</View>
-		</View>
+		</Pressable>
 	);
 }

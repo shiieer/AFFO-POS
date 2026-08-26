@@ -2,8 +2,10 @@ import { ActivityIndicator, Text, View } from "react-native";
 import ScreenContainer from "@/shared/components/ScreenContainer";
 import CategoryFilter from "../components/CategoryFilter";
 import ProductGrid from "../components/ProductGrid";
-import CartBar from "../components/CartBar";
+import CartPanel from "../components/CartPanel";
 import { useNewOrder } from "../hooks/useNewOrder";
+import { MenuItem } from "@/types/menu";
+import Toast from "@/shared/components/Toast";
 
 export default function NewOrderScreen() {
 	const {
@@ -14,12 +16,20 @@ export default function NewOrderScreen() {
 		loading,
 		error,
 		successMessage,
-		cartCount,
+		cart,
 		cartTotal,
-		addToCart,
+		menuItems,
+		getItemQuantity,
+		increaseItem,
+		decreaseItem,
+		clearCart,
 		submitOrder,
 		submitting,
 	} = useNewOrder();
+
+	const handleDecreaseFromMenu = (item: MenuItem) => {
+		decreaseItem(item.id);
+	};
 
 	return (
 		<ScreenContainer>
@@ -29,7 +39,7 @@ export default function NewOrderScreen() {
 				</View>
 			) : error ? (
 				<View className="flex-1 items-center justify-center px-6">
-					<Text className="text-red-500 text-center">{error}</Text>
+					<Text className="text-center text-red-500">{error}</Text>
 				</View>
 			) : (
 				<>
@@ -39,24 +49,27 @@ export default function NewOrderScreen() {
 						onSelect={setSelectedCategory}
 					/>
 
-					{successMessage ? (
-						<Text className="text-emerald-600 text-center py-2">
-							{successMessage}
-						</Text>
-					) : null}
-
 					<ProductGrid
 						items={filteredItems}
-						selectedItemId={null}
-						onPressItem={addToCart}
+						getItemQuantity={getItemQuantity}
+						onIncreaseItem={increaseItem}
+						onDecreaseItem={handleDecreaseFromMenu}
 					/>
 
-					<CartBar
-						itemCount={cartCount}
+					<CartPanel
+						items={cart}
 						total={cartTotal}
 						submitting={submitting}
+						onIncrease={(id) => {
+							const item = menuItems.find((i) => i.id === id);
+							if (item) increaseItem(item);
+						}}
+						onDecrease={decreaseItem}
+						onClear={clearCart}
 						onSubmit={submitOrder}
 					/>
+
+					<Toast message={successMessage} type="success"></Toast>
 				</>
 			)}
 		</ScreenContainer>

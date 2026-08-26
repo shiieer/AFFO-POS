@@ -8,6 +8,11 @@ from app.schemas.user import UserCreate, UserOut
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
+@router.get("", response_model=list[UserOut])
+def get_users(_: AdminUser, db: DbSession):
+    return db.query(User).all()
+
+
 @router.post("", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 def create_user(payload: UserCreate, _: AdminUser, db: DbSession):
     existing = db.query(User).filter(User.username == payload.username).first()

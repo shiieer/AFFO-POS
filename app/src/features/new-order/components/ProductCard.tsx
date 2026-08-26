@@ -1,27 +1,34 @@
-import { Pressable, View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Image } from "expo-image";
+import { formatRp } from "@/utils";
 import { MenuItem } from "@/types/menu";
+import QuantityStepper from "./QuantityStepper";
 
 type Props = {
 	item: MenuItem;
 	cardWidth: number;
-	selected?: boolean;
-	onPress: (item: MenuItem) => void;
+	quantity: number;
+	onIncrease: (item: MenuItem) => void;
+	onDecrease: (item: MenuItem) => void;
 };
 
 export default function ProductCard({
 	item,
 	cardWidth,
-	selected = false,
-	onPress,
+	quantity,
+	onIncrease,
+	onDecrease,
 }: Props) {
 	return (
 		<Pressable
-			onPress={() => onPress(item)}
 			style={{ width: cardWidth }}
-			className={`bg-white rounded-2xl border overflow-hidden mb-4 ${selected ? "border-brand-blue" : "border-brand-border"}`}
+			onPress={() => onIncrease(item)}
+			disabled={quantity > 0}
+			className={`mb-4 overflow-hidden rounded-2xl border bg-white ${
+				quantity > 0 ? "border-brand-blue" : "border-brand-border"
+			}`}
 		>
-			<View className="h-28 bg-brand-surface overflow-hidden items-center justify-center">
+			<View className="h-28 items-center justify-center overflow-hidden bg-brand-surface">
 				{item.image ? (
 					<Image
 						source={{ uri: item.image }}
@@ -30,7 +37,7 @@ export default function ProductCard({
 						transition={200}
 					/>
 				) : (
-					<Text className="text-brand-muted text-xs">No image</Text>
+					<Text className="text-xs text-brand-muted">No image</Text>
 				)}
 			</View>
 
@@ -38,9 +45,20 @@ export default function ProductCard({
 				<Text className="text-base font-medium text-brand-dark">
 					{item.name}
 				</Text>
-				<Text className="text-sm text-brand-muted mt-1">
-					{item.price.toFixed(2)}
+				<Text className="mt-1 text-sm text-brand-muted">
+					{formatRp(item.price)}
 				</Text>
+
+				<View className="mt-3 items-end">
+					{quantity > 0 && (
+						<QuantityStepper
+							quantity={quantity}
+							onIncrease={() => onIncrease(item)}
+							onDecrease={() => onDecrease(item)}
+							size="sm"
+						/>
+					)}
+				</View>
 			</View>
 		</Pressable>
 	);

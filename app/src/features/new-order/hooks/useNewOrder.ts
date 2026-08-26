@@ -2,13 +2,14 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchMenuApi } from "@/services/api/menu.api";
 import { createOrderApi } from "@/services/api/order.api";
 import { MenuItem } from "@/types/menu";
+import { ALL_ITEMS, getErrorMessage } from "@/utils";
 import { CartItem } from "../types/cart";
 import { getCategoriesFromMenu, MapMenuItem } from "../utils/mapMenu";
 
 export function useNewOrder() {
 	const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 	const [categories, setCategories] = useState<string[]>([]);
-	const [selectedCategory, setSelectedCategory] = useState<string>("");
+	const [selectedCategory, setSelectedCategory] = useState(ALL_ITEMS);
 	const [cart, setCart] = useState<CartItem[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [submitting, setSubmitting] = useState(false);
@@ -25,12 +26,10 @@ export function useNewOrder() {
 
 			setMenuItems(mapped);
 			const cats = getCategoriesFromMenu(mapped);
-			setCategories(cats);
-			setSelectedCategory((prev) => prev || cats[0] || "");
+			setCategories([ALL_ITEMS, ...cats]);
+			setSelectedCategory((prev) => prev || ALL_ITEMS);
 		} catch (err) {
-			setError(
-				err instanceof Error ? err.message : "Failed to load menu",
-			);
+			setError(getErrorMessage(err, "Failed to load menu"));
 		} finally {
 			setLoading(false);
 		}
@@ -41,11 +40,18 @@ export function useNewOrder() {
 	}, [loadMenu]);
 
 	const filteredItems = useMemo(
-		() => menuItems.filter((item) => item.category === selectedCategory),
+		() =>
+			selectedCategory === ALL_ITEMS
+				? menuItems
+				: menuItems.filter((item) => item.category === selectedCategory),
 		[menuItems, selectedCategory],
 	);
 
-	const addToCart = (item: MenuItem) => {
+	const getItemQuantity = (menuItemId: number) => {
+		return cart.find((c) => c.menuItemId === menuItemId)?.quantity ?? 0;
+	};
+
+	const increaseItem = (item: MenuItem) => {
 		setSuccessMessage(null);
 		setCart((prev) => {
 			const existing = prev.find((c) => c.menuItemId === item.id);
@@ -66,6 +72,23 @@ export function useNewOrder() {
 				},
 			];
 		});
+	};
+
+	const decreaseItem = (menuItemId: number) => {
+		setSuccessMessage(null);
+		setCart((prev) =>
+			prev
+				.map((c) =>
+					c.menuItemId === menuItemId
+						? { ...c, quantity: c.quantity - 1 }
+						: c,
+				)
+				.filter((c) => c.quantity > 0),
+		);
+	};
+
+	const clearCart = () => {
+		setCart([]);
 	};
 
 	const cartCount = useMemo(
@@ -97,9 +120,7 @@ export function useNewOrder() {
 			setCart([]);
 			setSuccessMessage("Order submitted successfully");
 		} catch (err) {
-			setError(
-				err instanceof Error ? err.message : "Failed to submit order",
-			);
+			setError(getErrorMessage(err, "Failed to submit order"));
 		} finally {
 			setSubmitting(false);
 		}
@@ -115,9 +136,13 @@ export function useNewOrder() {
 		successMessage,
 		cartCount,
 		cartTotal,
-		addToCart,
+		cart,
+		menuItems,
+		getItemQuantity,
+		increaseItem,
+		decreaseItem,
+		clearCart,
 		submitOrder,
 		submitting,
-		refreshMenu: loadMenu,
 	};
 }

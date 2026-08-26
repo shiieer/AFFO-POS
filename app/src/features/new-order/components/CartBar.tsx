@@ -1,4 +1,5 @@
 import { View, Text, Pressable, ActivityIndicator } from "react-native";
+import { formatRp } from "@/utils";
 
 type Props = {
 	itemCount: number;
@@ -20,7 +21,7 @@ export default function CartBar({
 					{itemCount} item{itemCount > 1 ? "s" : ""}
 				</Text>
 				<Text className="text-lg font-bold text-brand-dark">
-					Rp {total.toLocaleString("id-ID")}
+					{formatRp(total)}
 				</Text>
 			</View>
 
