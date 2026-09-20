@@ -11,7 +11,7 @@ function Row({
 }) {
 	return (
 		<View className="flex-row items-center justify-between py-2">
-			<Text className="text-sm text-brand-muted">{label}</Text>
+			<Text className="text-sm text-brand-slate dark:text-slate-400">{label}</Text>
 			{children}
 		</View>
 	);
@@ -31,21 +31,21 @@ export default function OrderDetailInfoCard({
 	const subtotal = order.items.reduce((sum, item) => sum + item.subtotal, 0);
 
 	return (
-		<View className="rounded-2xl border border-brand-border bg-white p-4">
-			<Text className="mb-2 text-base font-bold text-brand-dark">
+		<View className="rounded-3xl border border-sky-100/90 bg-white/90 p-4 dark:border-slate-800 dark:bg-slate-900/90">
+			<Text className="mb-2 text-base font-bold text-brand-dark dark:text-slate-100">
 				Order Details
 			</Text>
 
 			<Row label="Table">
-				<View className="rounded-md bg-brand-surface px-2 py-1">
-					<Text className="text-sm font-medium text-brand-dark">
+				<View className="rounded-md bg-brand-surface px-2 py-1 dark:bg-slate-800">
+					<Text className="text-sm font-medium text-brand-dark dark:text-slate-100">
 						{order.locationLabel}
 					</Text>
 				</View>
 			</Row>
 
 			<Row label="Time">
-				<Text className="text-sm font-medium text-brand-dark">
+				<Text className="text-sm font-medium text-brand-dark dark:text-slate-100">
 					{formatTime(order.createdAt)}
 				</Text>
 			</Row>
@@ -53,28 +53,28 @@ export default function OrderDetailInfoCard({
 			<Row label="Wait Time">
 				<Text
 					className={`text-sm font-bold ${
-						isUrgent ? "text-red-500" : "text-brand-dark"
+						isUrgent ? "text-red-500" : "text-brand-dark dark:text-slate-100"
 					}`}
 				>
 					{formatWait(elapsedSecond)}
 				</Text>
 			</Row>
 
-			<View className="my-3 border-t border-brand-border" />
+			<View className="my-3 border-t border-brand-border dark:border-slate-800" />
 
 			<Row label="Subtotal">
-				<Text className="text-sm text-brand-dark">
+				<Text className="text-sm text-brand-dark dark:text-slate-100">
 					{formatRp(subtotal)}
 				</Text>
 			</Row>
 
-			<View className="my-3 border-t border-brand-border" />
+			<View className="my-3 border-t border-brand-border dark:border-slate-800" />
 
 			<View className="flex-row items-center justify-between">
-				<Text className="text-base font-bold text-brand-dark">
+				<Text className="text-base font-bold text-brand-dark dark:text-slate-100">
 					Total
 				</Text>
-				<Text className="text-base font-bold text-brand-dark">
+				<Text className="text-base font-bold text-brand-dark dark:text-slate-100">
 					{formatRp(order.totalAmount)}
 				</Text>
 			</View>

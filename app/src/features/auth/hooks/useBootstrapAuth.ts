@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
-import { getToken, saveToken } from "@/services/storage/tokenStorage";
+import {
+	clearToken,
+	getToken,
+	saveToken,
+} from "@/services/storage/tokenStorage";
 import { onUnauthorized } from "@/services/auth/session";
+import { fetchMenuApi } from "@/services/api/menu.api";
 
 export function useBootstrapAuth() {
 	const [ready, setReady] = useState(false);
@@ -8,8 +13,21 @@ export function useBootstrapAuth() {
 
 	const refreshAuth = useCallback(async () => {
 		const token = await getToken();
-		setAuthenticated(!!token);
-		setReady(true);
+		if (!token) {
+			setAuthenticated(false);
+			setReady(true);
+			return;
+		}
+
+		try {
+			await fetchMenuApi();
+			setAuthenticated(true);
+		} catch {
+			await clearToken();
+			setAuthenticated(false);
+		} finally {
+			setReady(true);
+		}
 	}, []);
 
 	useEffect(() => {

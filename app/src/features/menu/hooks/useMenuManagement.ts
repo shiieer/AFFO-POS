@@ -7,6 +7,7 @@ import { getErrorMessage } from "@/utils";
 export function useMenuManagement() {
 	const [items, setItems] = useState<ManagedMenuItem[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState(ALL_ITEMS);
+	const [searchQuery, setSearchQuery] = useState("");
 	const [availabilityFilter, setAvailabilityFilter] =
 		useState<AvailabilityFilter>("all");
 	const [loading, setLoading] = useState(true);
@@ -36,7 +37,18 @@ export function useMenuManagement() {
 		[existingCategories],
 	);
 
+	const stats = useMemo(() => {
+		const active = items.filter((item) => item.isAvailable).length;
+		return {
+			total: items.length,
+			active,
+			soldOut: items.length - active,
+		};
+	}, [items]);
+
 	const filteredItems = useMemo(() => {
+		const query = searchQuery.trim().toLowerCase();
+
 		return items.filter((item) => {
 			const matchCategory =
 				selectedCategory === ALL_ITEMS ||
@@ -45,9 +57,14 @@ export function useMenuManagement() {
 				availabilityFilter === "all" ||
 				(availabilityFilter === "in-stock" && item.isAvailable) ||
 				(availabilityFilter === "out-of-stock" && !item.isAvailable);
-			return matchCategory && matchStock;
+			const matchSearch =
+				!query ||
+				item.name.toLowerCase().includes(query) ||
+				item.category.toLowerCase().includes(query) ||
+				(item.description ?? "").toLowerCase().includes(query);
+			return matchCategory && matchStock && matchSearch;
 		});
-	}, [items, selectedCategory, availabilityFilter]);
+	}, [items, selectedCategory, availabilityFilter, searchQuery]);
 
 	const cycleAvailabilityFilter = () => {
 		setAvailabilityFilter((prev) =>
@@ -82,10 +99,13 @@ export function useMenuManagement() {
 
 	return {
 		items: filteredItems,
+		stats,
 		categories,
 		existingCategories,
 		selectedCategory,
 		setSelectedCategory,
+		searchQuery,
+		setSearchQuery,
 		availabilityFilter,
 		cycleAvailabilityFilter,
 		loading,

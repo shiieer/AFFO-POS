@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ORDER_FILTERS } from "../constants/filters";
-import { Order, OrderFilter } from "../types/order";
+import { Order, OrderFilter, ShiftMetrics } from "../types/order";
 import { fetchOrdersApi, updateOrderStatusApi } from "@/services/api/order.api";
-import { getErrorMessage } from "@/utils";
-import { mapFilterToApiStatus, mapOrder } from "../utils/mapOrder";
+import { getElapsedSeconds, getErrorMessage } from "@/utils";
+import { countOrdersByFilter, filterOrders, mapOrder } from "../utils/mapOrder";
 
 export function useOrders() {
 	const [selectedFilter, setSelectedFilter] = useState<OrderFilter>("All");
@@ -12,35 +12,64 @@ export function useOrders() {
 	const [refreshing, setRefreshing] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const loadOrders = useCallback(
-		async (isRefresh = false) => {
-			try {
-				if (isRefresh) setRefreshing(true);
-				else setLoading(true);
+	const loadOrders = useCallback(async (isRefresh = false) => {
+		try {
+			if (isRefresh) setRefreshing(true);
+			else setLoading(true);
 
-				setError(null);
+			setError(null);
 
-				const apiStatus = mapFilterToApiStatus(selectedFilter);
-				const data = await fetchOrdersApi({
-					status: apiStatus,
-					active_only: selectedFilter === "All",
-				});
+			const data = await fetchOrdersApi({
+				active_only: false,
+			});
 
-				const list = Array.isArray(data) ? data : [];
-				setOrders(list.map(mapOrder));
-			} catch (err) {
-				setError(getErrorMessage(err, "Failed to load orders"));
-			} finally {
-				setLoading(false);
-				setRefreshing(false);
-			}
-		},
-		[selectedFilter],
-	);
+			const list = Array.isArray(data) ? data : [];
+			setOrders(list.map(mapOrder));
+		} catch (err) {
+			setError(getErrorMessage(err, "Failed to load orders"));
+		} finally {
+			setLoading(false);
+			setRefreshing(false);
+		}
+	}, []);
 
 	useEffect(() => {
 		loadOrders();
 	}, [loadOrders]);
+
+	const visibleOrders = useMemo(
+		() => filterOrders(orders, selectedFilter),
+		[orders, selectedFilter],
+	);
+
+	const counts = useMemo(() => countOrdersByFilter(orders), [orders]);
+
+	const metrics = useMemo<ShiftMetrics>(() => {
+		const active = orders.filter(
+			(order) =>
+				order.status !== "cancelled" && order.status !== "served",
+		);
+		const billed = orders.filter((order) => order.status !== "cancelled");
+		const served = orders.filter((order) => order.status === "served");
+		const paid = billed.filter((order) => order.paymentStatus === "paid");
+		const speedSource = served.length ? served : active;
+		const avgSeconds = speedSource.length
+			? speedSource.reduce(
+					(sum, order) => sum + getElapsedSeconds(order.createdAt),
+					0,
+				) / speedSource.length
+			: 0;
+
+		return {
+			inQueue: active.length,
+			newCount: active.filter((order) => order.status === "new").length,
+			avgMinutes: avgSeconds / 60,
+			revenue: paid.reduce((sum, order) => sum + order.totalAmount, 0),
+			paidRate: billed.length
+				? Math.round((paid.length / billed.length) * 100)
+				: 0,
+		};
+	}, [orders]);
 
 	const startPreparing = async (orderId: number) => {
 		await updateOrderStatusApi(orderId, { status: "preparing" });
@@ -52,6 +81,11 @@ export function useOrders() {
 		await loadOrders(true);
 	};
 
+	const markServed = async (orderId: number) => {
+		await updateOrderStatusApi(orderId, { status: "served" });
+		await loadOrders(true);
+	};
+
 	const printOrder = (orderId: number) => {
 		console.log("Print order:", orderId);
 	};
@@ -60,13 +94,16 @@ export function useOrders() {
 		filters: ORDER_FILTERS,
 		selectedFilter,
 		setSelectedFilter,
-		orders,
+		counts,
+		metrics,
+		orders: visibleOrders,
 		loading,
 		refreshing,
 		error,
 		refresh: () => loadOrders(true),
 		startPreparing,
 		markReady,
+		markServed,
 		printOrder,
 	};
 }

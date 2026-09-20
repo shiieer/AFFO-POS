@@ -1,16 +1,40 @@
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function AppHeader() {
 	return (
-		<View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-brand-border">
-			<MaterialCommunityIcons name="coffee" size={22} color="#111827" />
+		<View className="h-14 flex-row items-center justify-between border-b border-[#D8E3FB]/80 bg-white px-4 shadow-sm">
+			<View className="flex-row items-center gap-3">
+				<View className="h-9 w-9 items-center justify-center rounded-xl bg-cyan-500/10">
+					<MaterialCommunityIcons
+						name="coffee"
+						size={22}
+						color="#0284C7"
+					/>
+				</View>
+				<View className="flex-row items-center">
+					<Text className="text-base font-bold tracking-tight text-[#006194]">
+						Kedai Affo
+					</Text>
+					<View className="ml-1.5 rounded-full bg-[#57DFFE]/20 px-2 py-0.5">
+						<Text className="text-[11px] font-semibold uppercase tracking-wide text-[#0284C7]">
+							POS
+						</Text>
+					</View>
+				</View>
+			</View>
 
-			<Text className="text-lg font-semibold text-brand-dark">
-				KEDAI AFFO
-			</Text>
-
-			<Ionicons name="person-circle-outline" size={24} color="#111827" />
+			<View className="flex-row items-center gap-2">
+				<Pressable
+					className="h-8 w-8 items-center justify-center rounded-full"
+					accessibilityLabel="Sync status"
+				>
+					<Ionicons name="cloud-done" size={20} color="#059669" />
+				</Pressable>
+				<View className="h-8 w-8 items-center justify-center rounded-full bg-[#0284C7] shadow-sm">
+					<Text className="text-xs font-bold text-white">KA</Text>
+				</View>
+			</View>
 		</View>
 	);
 }

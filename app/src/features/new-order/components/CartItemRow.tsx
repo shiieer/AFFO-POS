@@ -1,4 +1,5 @@
 import { View, Text } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { formatRp } from "@/utils";
 import { CartItem } from "../types/cart";
 import QuantityStepper from "./QuantityStepper";
@@ -13,22 +14,32 @@ export default function CartItemRow({ item, onIncrease, onDecrease }: Props) {
 	const subtotal = item.price * item.quantity;
 
 	return (
-		<View className="mb-3 flex-row items-center justify-between">
-			<View className="mr-3 flex-1">
-				<Text className="font-medium text-brand-dark">{item.name}</Text>
-				<Text className="text-sm text-brand-muted">
-					{formatRp(item.price)}
-				</Text>
+		<View className="flex-row items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-2.5">
+			<View className="min-w-0 flex-1 flex-row items-center gap-2.5">
+				<View className="h-8 w-8 items-center justify-center rounded-lg bg-cyan-50">
+					<Ionicons name="cafe-outline" size={17} color="#0284C7" />
+				</View>
+				<View className="min-w-0 flex-1">
+					<Text
+						className="truncate text-[13px] font-bold text-slate-800"
+						numberOfLines={1}
+					>
+						{item.name}
+					</Text>
+					<Text className="text-[11px] text-slate-500">
+						{formatRp(item.price)} ea
+					</Text>
+				</View>
 			</View>
 
-			<View className="items-end">
+			<View className="flex-row items-center gap-2">
 				<QuantityStepper
 					quantity={item.quantity}
 					onIncrease={() => onIncrease(item.menuItemId)}
 					onDecrease={() => onDecrease(item.menuItemId)}
 					size="sm"
 				/>
-				<Text className="mt-1 text-sm font-semibold text-brand-dark">
+				<Text className="w-16 text-right text-[12px] font-bold text-slate-900">
 					{formatRp(subtotal)}
 				</Text>
 			</View>

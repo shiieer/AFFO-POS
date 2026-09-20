@@ -1,6 +1,6 @@
-export type OrderFilter = "All" | "New" | "Preparing" | "Ready" | "Cancelled";
+export type OrderFilter = "All" | "New" | "Preparing" | "Ready" | "Served";
 
-export type OrderStatus = "new" | "preparing" | "ready" | "cancelled";
+export type OrderStatus = "new" | "preparing" | "ready" | "served" | "cancelled";
 
 export type PaymentStatus = "paid" | "unpaid";
 
@@ -17,7 +17,10 @@ export type OrderLineItem = {
 
 export type Order = {
 	id: number;
+	title: string;
 	orderCode: string;
+	sourceLabel: string;
+	tag?: string;
 	status: OrderStatus;
 	paymentStatus: PaymentStatus;
 	locationType: OrderLocationType;
@@ -28,4 +31,15 @@ export type Order = {
 	totalAmount: number;
 	accentColor?: "teal" | "blue";
 	isUrgent?: boolean;
+	isPriority?: boolean;
+};
+
+export type OrderFilterCounts = Record<OrderFilter, number>;
+
+export type ShiftMetrics = {
+	inQueue: number;
+	newCount: number;
+	avgMinutes: number;
+	revenue: number;
+	paidRate: number;
 };

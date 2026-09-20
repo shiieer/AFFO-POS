@@ -23,7 +23,7 @@ export default function LoginScreen({ onAuthenticated }: Props) {
 	} = useLogin(onAuthenticated);
 
 	return (
-		<SafeAreaView className="flex-1 bg-white">
+		<SafeAreaView className="flex-1 bg-white dark:bg-slate-950">
 			<KeyboardAvoidingView
 				className="flex-1"
 				behavior={Platform.OS === "ios" ? "padding" : undefined}

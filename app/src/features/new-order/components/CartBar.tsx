@@ -1,4 +1,5 @@
 import { View, Text, Pressable, ActivityIndicator } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { formatRp } from "@/utils";
 
 type Props = {
@@ -14,30 +15,57 @@ export default function CartBar({
 	submitting,
 	onSubmit,
 }: Props) {
-	return (
-		<View className="px-4 py-3 bg-white border-t border-brand-border">
-			<View className="flex-row items-center justify-between mb-3">
-				<Text className="text-brand-muted">
-					{itemCount} item{itemCount > 1 ? "s" : ""}
-				</Text>
-				<Text className="text-lg font-bold text-brand-dark">
-					{formatRp(total)}
-				</Text>
-			</View>
+	if (itemCount <= 0) return null;
 
-			<Pressable
-				onPress={onSubmit}
-				disabled={submitting}
-				className={`rounded-xl py-3 items-center ${submitting ? "bg-brand-blue/60" : "bg-brand-blue"}`}
+	return (
+		<View className="px-4 pb-3 pt-1">
+			<View
+				className="flex-row items-center justify-between rounded-2xl border border-white/20 bg-slate-900 p-3.5"
+				style={{
+					shadowColor: "#0284C7",
+					shadowOpacity: 0.35,
+					shadowRadius: 24,
+					shadowOffset: { width: 0, height: 12 },
+					elevation: 8,
+				}}
 			>
-				{submitting ? (
-					<ActivityIndicator color="#FFFFFF" />
-				) : (
-					<Text className="text-white font-semibold">
-						Submit Order
-					</Text>
-				)}
-			</Pressable>
+				<View className="flex-row items-center gap-3">
+					<View className="h-10 w-10 items-center justify-center rounded-xl bg-white/15">
+						<Text className="text-sm font-bold text-cyan-200">
+							{itemCount}
+						</Text>
+					</View>
+					<View>
+						<Text className="text-[11px] font-semibold uppercase tracking-wider text-cyan-200/90">
+							Ticket Subtotal
+						</Text>
+						<Text className="text-[17px] font-extrabold leading-tight text-white">
+							{formatRp(total)}
+						</Text>
+					</View>
+				</View>
+
+				<Pressable
+					onPress={onSubmit}
+					disabled={submitting}
+					className="flex-row items-center gap-1.5 rounded-xl bg-white px-5 py-2.5"
+				>
+					{submitting ? (
+						<ActivityIndicator color="#006194" />
+					) : (
+						<>
+							<Text className="text-xs font-extrabold text-brand-primary">
+								Review & Pay
+							</Text>
+							<Ionicons
+								name="arrow-forward"
+								size={16}
+								color="#006194"
+							/>
+						</>
+					)}
+				</Pressable>
+			</View>
 		</View>
 	);
 }

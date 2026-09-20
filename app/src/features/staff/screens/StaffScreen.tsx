@@ -15,6 +15,7 @@ type Props = {
 
 export default function StaffScreen({ onBack }: Props) {
 	const { staff, loading, saving, error, addStaff } = useStaff();
+	const activeCount = staff.filter((user) => user.is_active).length;
 	const [adding, setAdding] = useState(false);
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
@@ -57,11 +58,16 @@ export default function StaffScreen({ onBack }: Props) {
 	return (
 		<ScreenContainer showHeader={false}>
 			<StaffHeader onBack={onBack} />
-			<StaffOverview onAdd={() => setAdding(true)} />
+			<StaffOverview
+				onAdd={() => setAdding(true)}
+				total={staff.length}
+				active={activeCount}
+				inactive={staff.length - activeCount}
+			/>
 
 			{loading ? (
 				<View className="flex-1 items-center justify-center">
-					<ActivityIndicator size="large" color="#2563EB" />
+					<ActivityIndicator size="large" color="#0284C7" />
 				</View>
 			) : error ? (
 				<Text className="mt-10 px-6 text-center text-red-500">

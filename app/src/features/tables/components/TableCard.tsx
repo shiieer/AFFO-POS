@@ -11,38 +11,59 @@ export default function TableCard({ table, onViewQr }: Props) {
 	const active = table.is_active;
 
 	return (
-		<View className="mb-3 overflow-hidden rounded-2xl border border-brand-border bg-white">
+		<View className="mb-4 overflow-hidden rounded-2xl border border-[#DEE8FF]/80 bg-white p-4">
 			<View
-				className={`h-1 ${active ? "bg-emerald-400" : "bg-red-300"}`}
+				className={`absolute left-0 right-0 top-0 h-1.5 ${
+					active ? "bg-[#0284C7]" : "bg-[#F87171]"
+				}`}
 			/>
-			<View className="items-center px-4 py-5">
-				<Ionicons
-					name="tablet-landscape-outline"
-					size={28}
-					color="#374151"
-				/>
-				<Text className="mt-3 text-lg font-bold text-brand-dark">
+
+			<View className="mt-1 items-center">
+				<View
+					className={`mb-3 h-14 w-14 items-center justify-center rounded-2xl ${
+						active ? "bg-[#F0F3FF]" : "bg-[#FFDADB]/50"
+					}`}
+				>
+					<Ionicons
+						name="grid"
+						size={28}
+						color={active ? "#0284C7" : "#B90538"}
+					/>
+				</View>
+				<Text className="text-center text-base font-bold text-[#111C2D]">
 					{table.name}
 				</Text>
 				<View
-					className={`mt-2 rounded-md px-2 py-1 ${active ? "bg-emerald-100" : "bg-red-100"}`}
+					className={`mt-1.5 rounded-full px-2.5 py-0.5 ${
+						active ? "bg-[#E0F2FE]" : "bg-[#FFE4E6]"
+					}`}
 				>
 					<Text
-						className={`text-[10px] font-bold tracking-widest ${active ? "text-emerald-800" : "text-red-700"}`}
+						className={`text-[11px] font-bold tracking-wide ${
+							active ? "text-[#0284C7]" : "text-[#BE123C]"
+						}`}
 					>
 						{active ? "ACTIVE" : "INACTIVE"}
 					</Text>
 				</View>
 				<Pressable
 					onPress={onViewQr}
-					className="mt-4 w-full flex-row items-center justify-center gap-2 rounded-lg border border-brand-border py-2.5"
+					className={`mt-4 w-full flex-row items-center justify-center gap-1.5 rounded-xl border py-2 ${
+						active
+							? "border-[#0284C7]/20 bg-[#F0F3FF]"
+							: "border-[#BFC7D2]/40 bg-[#F0F3FF]"
+					}`}
 				>
 					<Ionicons
 						name="qr-code-outline"
-						size={16}
-						color="#111827"
+						size={17}
+						color={active ? "#0284C7" : "#3F4850"}
 					/>
-					<Text className="text-sm font-semibold text-brand-dark">
+					<Text
+						className={`text-xs font-bold ${
+							active ? "text-[#0284C7]" : "text-[#3F4850]"
+						}`}
+					>
 						View QR
 					</Text>
 				</Pressable>

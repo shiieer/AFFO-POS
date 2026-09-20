@@ -1,24 +1,32 @@
 import { View, Text } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { formatElapsedTime } from "@/utils";
 
 type Props = {
 	elapsedSeconds: number;
-	isUrgent?: Boolean;
+	wrapClass: string;
+	color: string;
+	iconColor: string;
+	urgent?: boolean;
 };
 
 export default function OrderTimerBadge({
 	elapsedSeconds,
-	isUrgent = false,
+	wrapClass,
+	color,
+	iconColor,
+	urgent = false,
 }: Props) {
 	return (
 		<View
-			className={`px-2 py-1 rounded-md ${isUrgent ? "bg-red-50" : "bg-brand-surface"}`}
+			className={`flex-row items-center gap-1 rounded-xl border px-2.5 py-1 ${wrapClass} ${urgent ? "opacity-90" : ""}`}
 		>
-			<Text
-				className={`text-xs font-semibold ${
-					isUrgent ? "text-red-500" : "text-brand-muted"
-				}`}
-			>
+			<Ionicons
+				name={urgent ? "timer-outline" : "time-outline"}
+				size={14}
+				color={iconColor}
+			/>
+			<Text className={`font-mono text-xs font-bold ${color}`}>
 				{formatElapsedTime(elapsedSeconds)}
 			</Text>
 		</View>

@@ -5,6 +5,7 @@ import {
 	ActivityIndicator,
 	ScrollView,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { formatRp } from "@/utils";
 import { CartItem } from "../types/cart";
 import CartItemRow from "./CartItemRow";
@@ -28,59 +29,101 @@ export default function CartPanel({
 	onClear,
 	onSubmit,
 }: Props) {
-	const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 	const hasItems = items.length > 0;
 
 	return (
-		<View className="max-h-72 border-t border-brand-border bg-white px-4 py-3">
-			{hasItems ? (
-				<ScrollView className="mb-3" showsVerticalScrollIndicator={false}>
-					{items.map((item) => (
-						<CartItemRow
-							key={item.menuItemId}
-							item={item}
-							onIncrease={onIncrease}
-							onDecrease={onDecrease}
-						/>
-					))}
-				</ScrollView>
-			) : (
-				<Text className="mb-3 text-center text-brand-muted">
-					No items yet
-				</Text>
-			)}
-
-			<View className="mb-3 flex-row items-center justify-between">
-				<Text className="text-brand-muted">
-					{itemCount} item{itemCount !== 1 ? "s" : ""}
-				</Text>
-				<Text className="text-lg font-bold text-brand-dark">
-					{formatRp(total)}
-				</Text>
+		<View className="my-4 mr-4 w-80 shrink-0 rounded-2xl border border-slate-200/90 bg-white p-4">
+			<View className="flex-row items-center justify-between border-b border-slate-100 pb-3">
+				<View className="flex-row items-center gap-2">
+					<Ionicons name="cart-outline" size={20} color="#0891B2" />
+					<Text className="text-[15px] font-bold text-slate-900">
+						Current Ticket
+					</Text>
+				</View>
+				<Pressable onPress={onClear} disabled={!hasItems || submitting}>
+					<Text
+						className={`text-xs font-semibold ${hasItems ? "text-slate-400" : "text-slate-300"}`}
+					>
+						Clear
+					</Text>
+				</Pressable>
 			</View>
 
-			<View className="flex-row gap-3">
-				<Pressable
-					onPress={onClear}
-					disabled={!hasItems || submitting}
-					className={`flex-1 items-center rounded-xl border border-brand-border py-3 ${
-						!hasItems || submitting ? "opacity-40" : "opacity-100"
-					}`}
-				>
-					<Text className="font-semibold text-brand-dark">Clear</Text>
-				</Pressable>
+			<ScrollView
+				className="flex-1 py-3"
+				showsVerticalScrollIndicator={false}
+			>
+				{hasItems ? (
+					<View className="gap-2.5">
+						{items.map((item) => (
+							<CartItemRow
+								key={item.menuItemId}
+								item={item}
+								onIncrease={onIncrease}
+								onDecrease={onDecrease}
+							/>
+						))}
+					</View>
+				) : (
+					<View className="h-48 items-center justify-center">
+						<View className="mb-2 h-12 w-12 items-center justify-center rounded-full bg-slate-50">
+							<Ionicons
+								name="receipt-outline"
+								size={24}
+								color="#CBD5E1"
+							/>
+						</View>
+						<Text className="text-xs font-medium text-slate-500">
+							Ticket is empty
+						</Text>
+						<Text className="text-[11px] text-slate-400">
+							Select drinks on the left to add
+						</Text>
+					</View>
+				)}
+			</ScrollView>
 
+			<View className="border-t border-slate-100 pt-3">
+				<View className="mb-2 flex-row justify-between">
+					<Text className="text-xs text-slate-500">Subtotal</Text>
+					<Text className="text-xs font-bold text-slate-700">
+						{formatRp(total)}
+					</Text>
+				</View>
+				<View className="mb-3 flex-row items-center justify-between">
+					<Text className="text-[16px] font-extrabold text-slate-900">
+						Total Due
+					</Text>
+					<Text className="text-[16px] font-extrabold text-brand-blue">
+						{formatRp(total)}
+					</Text>
+				</View>
 				<Pressable
 					onPress={onSubmit}
 					disabled={!hasItems || submitting}
-					className={`flex-1 items-center rounded-xl py-3 ${
-						!hasItems || submitting ? "bg-brand-blue/60" : "bg-brand-blue"
+					className={`flex-row items-center justify-center gap-2 rounded-xl py-3 ${
+						!hasItems || submitting ? "bg-brand-blue/40" : "bg-brand-blue"
 					}`}
+					style={
+						hasItems
+							? {
+									shadowColor: "#0284C7",
+									shadowOpacity: 0.28,
+									shadowRadius: 8,
+									shadowOffset: { width: 0, height: 2 },
+								}
+							: undefined
+					}
 				>
 					{submitting ? (
 						<ActivityIndicator color="#FFFFFF" />
 					) : (
-						<Text className="font-semibold text-white">Submit Order</Text>
+						<>
+							<Ionicons name="card-outline" size={18} color="#FFFFFF" />
+							<Text className="text-sm font-bold text-white">
+								Charge Order
+							</Text>
+						</>
 					)}
 				</Pressable>
 			</View>

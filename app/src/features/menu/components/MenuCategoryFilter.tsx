@@ -1,35 +1,49 @@
 import { ScrollView, Pressable, Text } from "react-native";
+import { ALL_ITEMS } from "../types/menu";
 
 type Props = {
 	categories: string[];
 	selected: string;
 	onSelect: (category: string) => void;
+	allCount: number;
 };
 
 export default function MenuCategoryFilter({
 	categories,
 	selected,
 	onSelect,
+	allCount,
 }: Props) {
 	return (
 		<ScrollView
 			horizontal
 			showsHorizontalScrollIndicator={false}
-			className="flex-grow-0 bg-white"
-			contentContainerClassName="gap-2 px-4 py-3"
+			className="flex-grow-0"
+			contentContainerClassName="gap-2 px-4 py-2"
 		>
 			{categories.map((category) => {
 				const isActive = category === selected;
+				const label =
+					category === ALL_ITEMS
+						? `All Items (${allCount})`
+						: category;
+
 				return (
 					<Pressable
 						key={category}
 						onPress={() => onSelect(category)}
-						className={`rounded-full px-4 py-2 ${isActive ? "bg-brand-dark" : "bg-brand-surface"}`}
+						className={`rounded-full px-4 py-2 ${
+							isActive
+								? "bg-brand-blue shadow-sm"
+								: "border border-[#BFC7D2]/80 bg-white"
+						}`}
 					>
 						<Text
-							className={`text-sm font-medium ${isActive ? "text-white" : "text-brand-dark"}`}
+							className={`text-xs font-semibold ${
+								isActive ? "text-white" : "text-[#3F4850]"
+							}`}
 						>
-							{category}
+							{label}
 						</Text>
 					</Pressable>
 				);

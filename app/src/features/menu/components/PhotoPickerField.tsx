@@ -27,7 +27,7 @@ export default function PhotoPickerField({ imageUri, onChange }: Props) {
 	return (
 		<Pressable
 			onPress={pickImage}
-			className="mb-5 h-40 items-center justify-center overflow-hidden rounded-xl border border-brand-border bg-brnad-surface"
+			className="mb-1 h-40 items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-sky-300 bg-white shadow-sm"
 		>
 			{imageUri ? (
 				<Image
@@ -36,11 +36,18 @@ export default function PhotoPickerField({ imageUri, onChange }: Props) {
 					contentFit="cover"
 				/>
 			) : (
-				<View className="items-center">
-					<Ionicons name="camera-outline" size={28} color="#6B7280" />
-					<Text className="mt-2 text-sm text-brand-muted">
-						Upload Photo
-					</Text>
+				<View className="items-center gap-2 px-4">
+					<View className="h-12 w-12 items-center justify-center rounded-full bg-sky-50">
+						<Ionicons name="image-outline" size={26} color="#0284C7" />
+					</View>
+					<View className="items-center">
+						<Text className="text-sm font-semibold text-slate-700">
+							Upload Item Photo
+						</Text>
+						<Text className="text-xs font-medium text-slate-400">
+							PNG, JPG or WEBP up to 5MB
+						</Text>
+					</View>
 				</View>
 			)}
 		</Pressable>

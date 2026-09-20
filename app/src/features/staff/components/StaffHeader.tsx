@@ -7,13 +7,36 @@ type Props = {
 
 export default function StaffHeader({ onBack }: Props) {
 	return (
-		<View className="flex-row items-center border-b border-brand-border bg-white px-3 py-3">
-			<Pressable onPress={onBack} className="p-1">
-				<Ionicons name="chevron-back" size={24} color="#111827" />
+		<View className="h-16 flex-row items-center justify-between border-b border-sky-100 bg-white/90 px-4">
+			<Pressable
+				onPress={onBack}
+				className="h-9 w-9 items-center justify-center rounded-xl"
+			>
+				<Ionicons name="chevron-back" size={22} color="#0284C7" />
 			</Pressable>
-			<Text className="mr-8 flex-1 text-center text-lg font-bold text-brand-dark">
-				Staff Management
-			</Text>
+			<View className="flex-row items-center gap-2">
+				<View className="h-9 w-9 items-center justify-center rounded-xl border border-sky-100 bg-sky-50">
+					<Ionicons name="cafe" size={18} color="#0284C7" />
+				</View>
+				<View>
+					<View className="flex-row items-center gap-1.5">
+						<Text className="text-base font-bold tracking-tight text-slate-900">
+							Kedai Affo
+						</Text>
+						<View className="rounded-md bg-sky-100/70 px-1.5 py-0.5">
+							<Text className="text-[10px] font-bold uppercase tracking-wider text-[#0284C7]">
+								POS
+							</Text>
+						</View>
+					</View>
+					<Text className="text-[11px] font-medium text-slate-400">
+						Staff & Roles
+					</Text>
+				</View>
+			</View>
+			<View className="h-9 w-9 items-center justify-center rounded-xl">
+				<Ionicons name="person-circle" size={22} color="#64748B" />
+			</View>
 		</View>
 	);
 }

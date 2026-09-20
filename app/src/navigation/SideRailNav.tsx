@@ -6,59 +6,24 @@ import { Ionicons } from "@expo/vector-icons";
 import { OrdersNavigator } from "@/features/orders";
 import { NewOrderScreen } from "@/features/new-order";
 import { MenuNavigator } from "@/features/menu";
-import { ReportsScreen } from "@/features/reports";
 import { MoreNavigator } from "@/features/more";
 import { SideTabKey } from "./types";
 
 const TABS: {
 	key: SideTabKey;
 	label: string;
-	icon: (active: boolean) => JSX.Element;
+	icon: keyof typeof Ionicons.glyphMap;
 }[] = [
-	{
-		key: "Orders",
-		label: "Orders",
-		icon: () => (
-			<Ionicons name="receipt-outline" size={22} color="#111827" />
-		),
-	},
-	{
-		key: "NewOrder",
-		label: "New Order",
-		icon: (active) => (
-			<Ionicons
-				name="add-circle"
-				size={24}
-				color={active ? "#2563EB" : "#6B7280"}
-			/>
-		),
-	},
-	{
-		key: "Menu",
-		label: "Menu",
-		icon: () => <Ionicons name="book-outline" size={22} color="#111827" />,
-	},
-	{
-		key: "Reports",
-		label: "Reports",
-		icon: () => (
-			<Ionicons name="bar-chart-outline" size={22} color="#111827" />
-		),
-	},
-	{
-		key: "More",
-		label: "More",
-		icon: () => (
-			<Ionicons name="ellipsis-horizontal" size={22} color="#111827" />
-		),
-	},
+	{ key: "Orders", label: "Orders", icon: "receipt-outline" },
+	{ key: "NewOrder", label: "New Order", icon: "add-circle-outline" },
+	{ key: "Menu", label: "Menu", icon: "book-outline" },
+	{ key: "More", label: "More", icon: "ellipsis-horizontal" },
 ];
 
-const SCREEN_MAP = {
+const SCREEN_MAP: Record<SideTabKey, () => JSX.Element> = {
 	Orders: OrdersNavigator,
 	NewOrder: NewOrderScreen,
 	Menu: MenuNavigator,
-	Reports: ReportsScreen,
 	More: MoreNavigator,
 };
 
@@ -67,8 +32,8 @@ export default function SideRailNav() {
 	const ActiveScreen = SCREEN_MAP[activeTab];
 
 	return (
-		<SafeAreaView className="flex-1 bg-brand-surface flex-row">
-			<View className="w-24 bg-white border-r border-brand-border py-4 items-center gap-4">
+		<SafeAreaView className="flex-1 flex-row bg-[#F0F5FA]">
+			<View className="w-[200px] gap-1.5 border-r border-[#D8E3FB]/80 bg-[#F0F5FA] px-3 py-4">
 				{TABS.map((tab) => {
 					const isActive = tab.key === activeTab;
 
@@ -76,11 +41,23 @@ export default function SideRailNav() {
 						<Pressable
 							key={tab.key}
 							onPress={() => setActiveTab(tab.key)}
-							className={`items-center px-2 py-2 rounded-xl ${isActive ? "bg-blue-50" : ""}`}
+							className={`flex-row items-center gap-3 rounded-xl px-3.5 py-2.5 ${
+								isActive
+									? "border border-[#BFC7D2]/60 bg-white shadow-sm"
+									: ""
+							}`}
 						>
-							{tab.icon(isActive)}
+							<Ionicons
+								name={tab.icon}
+								size={20}
+								color={isActive ? "#0284C7" : "#707881"}
+							/>
 							<Text
-								className={`text-[10px] mt-1 text-center ${isActive ? "text-brand-blue font-semibold" : "text-brand-muted"}`}
+								className={`text-sm ${
+									isActive
+										? "font-bold text-[#006194]"
+										: "font-semibold text-[#3F4850]"
+								}`}
 							>
 								{tab.label}
 							</Text>

@@ -59,7 +59,7 @@ export default function TableScreen({ onBack }: Props) {
 
 			{loading ? (
 				<View className="flex-1 items-center justify-center">
-					<ActivityIndicator size="large" color="#2563EB" />
+					<ActivityIndicator size="large" color="#0284C7" />
 				</View>
 			) : error ? (
 				<Text className="mt-10 text-center text-red-500">{error}</Text>

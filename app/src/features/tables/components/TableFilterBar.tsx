@@ -15,17 +15,23 @@ export default function TableFilterBar({ filter, counts, onSelect }: Props) {
 	];
 
 	return (
-		<View className="flex-row gap-2 px-4 py-4">
+		<View className="mb-2 flex-row flex-wrap items-center gap-2 border-b border-[#DEE8FF]/70 px-4 pb-4 pt-5">
 			{pills.map((pill) => {
 				const isActive = pill.key === filter;
 				return (
 					<Pressable
 						key={pill.key}
 						onPress={() => onSelect(pill.key)}
-						className={`rounded-full px-4 py-2 ${isActive ? "bg-brand-dark" : "border border-brand-border bg-white"}`}
+						className={`rounded-full px-4 py-1.5 ${
+							isActive
+								? "bg-[#006194] shadow-sm shadow-[#006194]/20"
+								: "border border-[#BFC7D2]/60 bg-white"
+						}`}
 					>
 						<Text
-							className={`text-sm font-medium ${isActive ? "text-white" : "text-brand-dark"}`}
+							className={`text-xs font-bold ${
+								isActive ? "text-white" : "font-semibold text-[#3F4850]"
+							}`}
 						>
 							{pill.label} ({pill.count})
 						</Text>

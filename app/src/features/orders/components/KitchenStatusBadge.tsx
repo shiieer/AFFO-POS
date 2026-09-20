@@ -7,23 +7,28 @@ const STYLES: Record<
 > = {
 	new: {
 		label: "NEW",
-		wrap: "bg-amber-50",
-		text: "text-amber-700",
+		wrap: "border border-sky-200 bg-sky-50 dark:border-sky-800 dark:bg-sky-950",
+		text: "text-sky-700 dark:text-sky-300",
 	},
 	preparing: {
 		label: "IN PROGRESS",
-		wrap: "bg-blue-50",
-		text: "text-blue-700",
+		wrap: "border border-sky-200 bg-sky-100 dark:border-sky-800 dark:bg-sky-950",
+		text: "text-sky-700 dark:text-sky-300",
 	},
 	ready: {
 		label: "READY",
-		wrap: "bg-emerald-50",
-		text: "text-emerald-700",
+		wrap: "border border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950",
+		text: "text-emerald-700 dark:text-emerald-300",
+	},
+	served: {
+		label: "SERVED",
+		wrap: "border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800",
+		text: "text-slate-600 dark:text-slate-300",
 	},
 	cancelled: {
 		label: "CANCELLED",
-		wrap: "bg-red-50",
-		text: "text-red-600",
+		wrap: "border border-rose-200 bg-rose-50 dark:border-rose-800 dark:bg-rose-950",
+		text: "text-rose-500 dark:text-rose-300",
 	},
 };
 
@@ -35,9 +40,9 @@ export default function KitchenStatusBadge({
 	const style = STYLES[status];
 
 	return (
-		<View className={`rounded px-2 py-1 ${style.wrap}`}>
+		<View className={`rounded-md px-2 py-0.5 ${style.wrap}`}>
 			<Text
-				className={`text-[10px] font-bold tracking-wide ${style.text}`}
+				className={`font-mono text-[10px] font-bold tracking-wide ${style.text}`}
 			>
 				{style.label}
 			</Text>

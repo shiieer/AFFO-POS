@@ -5,5 +5,5 @@ export const ORDER_FILTERS: OrderFilter[] = [
 	"New",
 	"Preparing",
 	"Ready",
-	"Cancelled",
+	"Served",
 ];

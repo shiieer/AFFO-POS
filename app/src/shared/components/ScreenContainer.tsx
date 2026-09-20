@@ -12,7 +12,7 @@ export default function ScreenContainer({
 	showHeader = true,
 }: Props) {
 	return (
-		<SafeAreaView className="flex-1 bg-brand-surface" edges={["top"]}>
+		<SafeAreaView className="flex-1 bg-[#F0F5FA]" edges={["top"]}>
 			{showHeader && <AppHeader />}
 			{children}
 		</SafeAreaView>

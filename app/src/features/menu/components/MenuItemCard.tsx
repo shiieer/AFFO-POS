@@ -1,72 +1,148 @@
 import { View, Text, Pressable } from "react-native";
 import { Image } from "expo-image";
+import { Ionicons } from "@expo/vector-icons";
 import { ManagedMenuItem } from "../types/menu";
 import { formatRp } from "@/utils";
 import AvailabilitySwitch from "./AvailabilitySwitch";
 
 type Props = {
 	item: ManagedMenuItem;
+	featured?: boolean;
 	onPress: () => void;
 	onToggle: (item: ManagedMenuItem) => void;
 };
 
-export default function MenuItemCard({ item, onPress, onToggle }: Props) {
+export default function MenuItemCard({
+	item,
+	featured = false,
+	onPress,
+	onToggle,
+}: Props) {
+	const available = item.isAvailable;
+
 	return (
-		<View className="mb-3 overflow-hidden rounded-2xl border border-brand-border bg-white">
-			<View className="flex-row items-center gap-3 p-3">
-				<View
-					className={`w-1.5 ${item.isAvailable ? "bg-emerald-400" : "bg-red-400"}`}
-				/>
+		<View
+			className={`relative mb-3 overflow-hidden rounded-2xl border p-3.5 shadow-sm ${
+				available
+					? "border-[#BFC7D2]/70 bg-white"
+					: "border-red-200 bg-white/70 opacity-85"
+			}`}
+		>
+			<View
+				className={`absolute bottom-0 left-0 top-0 w-1.5 rounded-l-2xl ${
+					available ? "bg-[#0284C7]" : "bg-[#BA1A1A]"
+				}`}
+			/>
+
+			<View className="flex-row items-center justify-between gap-3 pl-1">
 				<Pressable
 					onPress={onPress}
-					className="flex-1 flex-row items-center"
+					className="min-w-0 flex-1 flex-row items-center gap-3"
 				>
-					<View className="h-16 w-16 overflow-hidden rounded-xl bg-brand-surface">
-						{item.image ? (
-							<Image
-								source={{ uri: item.image }}
-								style={{ width: "100%", height: "100%" }}
-								contentFit="cover"
-							/>
+					<View className="relative">
+						<View
+							className={`h-14 w-14 overflow-hidden rounded-xl border border-[#BFC7D2]/70 bg-[#F0F3FF] ${
+								available ? "" : "opacity-70"
+							}`}
+						>
+							{item.image ? (
+								<Image
+									source={{ uri: item.image }}
+									style={{ width: "100%", height: "100%" }}
+									contentFit="cover"
+								/>
+							) : (
+								<View className="flex-1 items-center justify-center">
+									<Ionicons
+										name="cafe-outline"
+										size={20}
+										color="#707881"
+									/>
+								</View>
+							)}
+						</View>
+						{featured ? (
+							<View className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-[#0284C7]" />
+						) : null}
+					</View>
+
+					<View className="min-w-0 flex-1">
+						<View className="flex-row flex-wrap items-center gap-1.5">
+							<Text
+								className={`text-sm font-bold text-[#111C2D] ${
+									available
+										? ""
+										: "line-through decoration-red-400"
+								}`}
+								numberOfLines={1}
+							>
+								{item.name}
+							</Text>
+							{featured ? (
+								<View className="rounded bg-sky-100 px-1.5 py-0.5">
+									<Text className="text-[10px] font-bold uppercase tracking-wider text-[#006194]">
+										Popular
+									</Text>
+								</View>
+							) : null}
+						</View>
+
+						{available ? (
+							<Text
+								className="mt-0.5 text-xs text-[#3F4850]"
+								numberOfLines={1}
+							>
+								{item.description?.trim() || item.category}
+							</Text>
 						) : (
-							<View className="flex-1 items-center justify-center">
-								<Text className="text-[10px] text-brand-muted">
-									No Image
+							<View className="mt-0.5 flex-row items-center gap-1">
+								<Ionicons
+									name="warning"
+									size={14}
+									color="#DC2626"
+								/>
+								<Text className="text-xs font-semibold text-red-600">
+									Sold Out Today
 								</Text>
 							</View>
 						)}
-					</View>
 
-					<View className="ml-3 flex-1">
-						<Text
-							className={`text-base font-bold ${item.isAvailable ? "text-brand-dark" : "text-brand-muted"}`}
-						>
-							{item.name}
-						</Text>
-
-						<Text className="mt-0.5 text-xs text-brand-muted">
-							{item.category}
-						</Text>
-
-						{!item.isAvailable ? (
-							<Text className="mt-1 text-[10px] font-bold tracking-wide text-red-500">
-								OUT OF STOCK
+						<View className="mt-1 flex-row items-center gap-2">
+							<Text
+								className={`text-xs font-bold ${
+									available
+										? "text-[#006194]"
+										: "text-[#707881] line-through"
+								}`}
+							>
+								{formatRp(item.price)}
 							</Text>
-						) : null}
-
-						<Text
-							className={`mt-2 font-semibold ${item.isAvailable ? "text-brand-dark" : "text-brand-muted"}`}
-						>
-							{formatRp(item.price)}
-						</Text>
+							<Text
+								className={`text-[11px] font-medium ${
+									available
+										? "text-[#707881]"
+										: "font-semibold text-red-500"
+								}`}
+							>
+								{available ? item.category : "0 in stock"}
+							</Text>
+						</View>
 					</View>
 				</Pressable>
 
-				<AvailabilitySwitch
-					value={item.isAvailable}
-					onValueChange={() => onToggle(item)}
-					activeColor="#5DDCAD"
-				/>
+				<View className="flex-row items-center gap-3">
+					<Pressable
+						onPress={onPress}
+						className="h-8 w-8 items-center justify-center rounded-xl border border-[#BFC7D2]"
+						accessibilityLabel="Edit item"
+					>
+						<Ionicons name="pencil" size={18} color="#3F4850" />
+					</Pressable>
+					<AvailabilitySwitch
+						value={available}
+						onValueChange={() => onToggle(item)}
+					/>
+				</View>
 			</View>
 		</View>
 	);

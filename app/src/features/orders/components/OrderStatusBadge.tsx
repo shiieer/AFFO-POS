@@ -10,14 +10,20 @@ export default function OrderStatusBadge({ status }: Props) {
 
 	return (
 		<View
-			className={`px-2 py-1 rounded ${
-				isPaid ? "bg-emerald-50" : "bg-brand-surface"
+			className={`rounded-md border px-2 py-0.5 ${
+				isPaid
+					? "border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950"
+					: "border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950"
 			}`}
 		>
 			<Text
-				className={`text-[10px] font-bold tracking-wide ${isPaid ? "text-emerald-600" : "text-brand-muted"}`}
+				className={`font-mono text-[10px] font-bold uppercase tracking-wider ${
+					isPaid
+						? "text-emerald-700 dark:text-emerald-300"
+						: "text-amber-700 dark:text-amber-300"
+				}`}
 			>
-				{isPaid ? "PAID" : "UNPAID"}
+				{isPaid ? "Paid" : "Unpaid"}
 			</Text>
 		</View>
 	);

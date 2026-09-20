@@ -1,5 +1,4 @@
 import { Pressable, Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
 type Props = {
 	quantity: number;
@@ -14,26 +13,25 @@ export default function QuantityStepper({
 	onDecrease,
 	size = "md",
 }: Props) {
-	const buttonSize = size === "sm" ? "w-7 h-7" : "w-8 h-8";
-	const iconSize = size === "sm" ? 16 : 18;
+	const compact = size === "sm";
+
 	return (
-		<View className="flex-row items-center gap-2 flex-shrink-0">
+		<View className="flex-row items-center rounded-lg border border-slate-200 bg-white">
 			<Pressable
 				onPress={onDecrease}
 				disabled={quantity <= 0}
-				className={`${buttonSize} items-center justify-center rounded-full border border-brand-border bg-white ${quantity <= 0 ? "opacity-40" : "opacity-100"}`}
+				className={`${compact ? "h-6 w-6" : "h-8 w-8"} items-center justify-center ${quantity <= 0 ? "opacity-40" : ""}`}
 			>
-				<Ionicons name="remove" size={iconSize} color="#111827" />
+				<Text className="text-xs font-bold text-slate-500">-</Text>
 			</Pressable>
-
-			<Text className="min-w-[20px] text-center font-semibold text-brand-dark">
+			<Text className="min-w-[18px] px-1.5 text-center text-xs font-bold text-slate-800">
 				{quantity}
 			</Text>
 			<Pressable
 				onPress={onIncrease}
-				className={`${buttonSize} items-center justify-center rounded-full bg-brand-blue`}
+				className={`${compact ? "h-6 w-6" : "h-8 w-8"} items-center justify-center`}
 			>
-				<Ionicons name="add" size={iconSize} color="#FFFFFF" />
+				<Text className="text-xs font-bold text-slate-500">+</Text>
 			</Pressable>
 		</View>
 	);

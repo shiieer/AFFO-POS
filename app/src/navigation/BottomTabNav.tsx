@@ -1,15 +1,34 @@
 import { createBottomTabNavigator } from "expo-router/js-tabs";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { NewOrderScreen } from "@/features/new-order";
 import { OrdersNavigator } from "@/features/orders";
 import { MenuNavigator } from "@/features/menu";
-import { ReportsScreen } from "@/features/reports";
 import { MoreNavigator } from "@/features/more";
 import { RootTabParamList } from "./types";
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
+
+function TabIcon({
+	name,
+	color,
+	focused,
+}: {
+	name: keyof typeof Ionicons.glyphMap;
+	color: string;
+	focused: boolean;
+}) {
+	return (
+		<View
+			className={`items-center rounded-xl px-3 py-1 ${
+				focused ? "bg-sky-50" : ""
+			}`}
+		>
+			<Ionicons name={name} color={color} size={22} />
+		</View>
+	);
+}
 
 export default function BottomTabNav() {
 	return (
@@ -18,16 +37,22 @@ export default function BottomTabNav() {
 			screenOptions={{
 				headerShown: false,
 				tabBarStyle: {
-					height: 72,
-					paddingTop: 8,
-					paddingBottom: 10,
-					backgroundColor: "#FFFFFF",
-					borderTopColor: "#E5E7EB",
+					height: 64,
+					paddingTop: 6,
+					paddingBottom: 8,
+					backgroundColor: "rgba(255,255,255,0.95)",
+					borderTopColor: "rgba(191,199,210,0.8)",
+					elevation: 8,
+					shadowColor: "#000",
+					shadowOpacity: 0.08,
+					shadowRadius: 12,
+					shadowOffset: { width: 0, height: -2 },
 				},
-				tabBarActiveTintColor: "#2563EB",
-				tabBarInactiveTintColor: "#6B7280",
+				tabBarActiveTintColor: "#0284C7",
+				tabBarInactiveTintColor: "#3F4850",
 				tabBarLabelStyle: {
-					fontSize: 12,
+					fontSize: 11,
+					fontWeight: "600",
 					marginTop: 2,
 				},
 			}}
@@ -36,11 +61,11 @@ export default function BottomTabNav() {
 				name="Orders"
 				component={OrdersNavigator}
 				options={{
-					tabBarIcon: ({ color, size }) => (
-						<Ionicons
+					tabBarIcon: ({ color, focused }) => (
+						<TabIcon
 							name="receipt-outline"
 							color={color}
-							size={size}
+							focused={focused}
 						/>
 					),
 				}}
@@ -50,18 +75,22 @@ export default function BottomTabNav() {
 				name="NewOrder"
 				component={NewOrderScreen}
 				options={{
-					tabBarLabel: ({ focused }) => (
+					tabBarLabel: ({ focused, color }) => (
 						<Text
-							className={`text-xs ${focused ? "text-brand-blue font-semibold" : "text-brand-muted"}`}
+							className="mt-0.5 text-[11px]"
+							style={{
+								color,
+								fontWeight: focused ? "700" : "600",
+							}}
 						>
 							New Order
 						</Text>
 					),
-					tabBarIcon: ({ color, size }) => (
-						<Ionicons
-							name="add-circle-outline"
-							size={size}
+					tabBarIcon: ({ color, focused }) => (
+						<TabIcon
+							name={focused ? "add-circle" : "add-circle-outline"}
 							color={color}
+							focused={focused}
 						/>
 					),
 				}}
@@ -71,25 +100,11 @@ export default function BottomTabNav() {
 				name="Menu"
 				component={MenuNavigator}
 				options={{
-					tabBarIcon: ({ color, size }) => (
-						<Ionicons
+					tabBarIcon: ({ color, focused }) => (
+						<TabIcon
 							name="book-outline"
 							color={color}
-							size={size}
-						/>
-					),
-				}}
-			/>
-
-			<Tab.Screen
-				name="Reports"
-				component={ReportsScreen}
-				options={{
-					tabBarIcon: ({ color, size }) => (
-						<Ionicons
-							name="bar-chart-outline"
-							color={color}
-							size={size}
+							focused={focused}
 						/>
 					),
 				}}
@@ -99,11 +114,11 @@ export default function BottomTabNav() {
 				name="More"
 				component={MoreNavigator}
 				options={{
-					tabBarIcon: ({ color, size }) => (
-						<Ionicons
+					tabBarIcon: ({ color, focused }) => (
+						<TabIcon
 							name="ellipsis-horizontal"
 							color={color}
-							size={size}
+							focused={focused}
 						/>
 					),
 				}}

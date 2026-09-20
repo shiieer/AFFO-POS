@@ -1,27 +1,39 @@
 import { OrderApi, ApiOrderStatus } from "@/types/api/order";
 import { getElapsedSeconds } from "@/utils";
-import { Order, OrderFilter, OrderStatus } from "../types/order";
+import {
+	Order,
+	OrderFilter,
+	OrderFilterCounts,
+	OrderStatus,
+} from "../types/order";
 
 function mapStatus(status: ApiOrderStatus): OrderStatus {
 	if (status === "pending") return "new";
 	if (status === "preparing") return "preparing";
-	if (status === "cancelled") return "cancelled";
-	return "ready";
+	if (status === "ready") return "ready";
+	if (status === "served") return "served";
+	return "cancelled";
 }
 
 export function mapOrder(api: OrderApi): Order {
 	const elapsedSeconds = getElapsedSeconds(api.created_at);
+	const isTable = Boolean(api.table_id);
+	const isPriority = !api.is_paid && elapsedSeconds >= 300;
 
 	return {
 		id: api.id,
-		orderCode: api.table_name ?? `#ORD-${api.id}`,
+		title: api.table_name ?? "Express To-Go",
+		orderCode: `#ORD-${String(api.id).padStart(4, "0")}`,
+		sourceLabel: api.customer_name?.trim() || (isTable ? "Dine-in" : "Walk-in"),
+		tag: isPriority ? "Priority" : isTable ? undefined : "Bagged",
 		status: mapStatus(api.status),
 		paymentStatus: api.is_paid ? "paid" : "unpaid",
-		locationType: api.table_id ? "table" : "to-go",
+		locationType: isTable ? "table" : "to-go",
 		locationLabel: api.table_name ?? api.customer_name ?? "To-Go",
 		elapsedSeconds,
 		isUrgent: elapsedSeconds >= 300,
-		accentColor: api.table_id ? "blue" : "teal",
+		isPriority,
+		accentColor: isTable ? "blue" : "teal",
 		items: (api.items ?? []).map((item) => ({
 			id: item.id,
 			quantity: item.quantity,
@@ -41,6 +53,33 @@ export function mapFilterToApiStatus(
 	if (filter === "New") return "pending";
 	if (filter === "Preparing") return "preparing";
 	if (filter === "Ready") return "ready";
-	if (filter === "Cancelled") return "cancelled";
+	if (filter === "Served") return "served";
 	return undefined;
+}
+
+export function filterOrders(orders: Order[], filter: OrderFilter) {
+	if (filter === "All") {
+		return orders.filter((order) => order.status !== "cancelled");
+	}
+
+	const statusMap: Record<Exclude<OrderFilter, "All">, OrderStatus> = {
+		New: "new",
+		Preparing: "preparing",
+		Ready: "ready",
+		Served: "served",
+	};
+
+	return orders.filter((order) => order.status === statusMap[filter]);
+}
+
+export function countOrdersByFilter(orders: Order[]): OrderFilterCounts {
+	const active = orders.filter((order) => order.status !== "cancelled");
+
+	return {
+		All: active.length,
+		New: active.filter((order) => order.status === "new").length,
+		Preparing: active.filter((order) => order.status === "preparing").length,
+		Ready: active.filter((order) => order.status === "ready").length,
+		Served: active.filter((order) => order.status === "served").length,
+	};
 }

@@ -1,5 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import { Image } from "expo-image";
+import { Ionicons } from "@expo/vector-icons";
 import { formatRp } from "@/utils";
 import { MenuItem } from "@/types/menu";
 import QuantityStepper from "./QuantityStepper";
@@ -19,16 +20,34 @@ export default function ProductCard({
 	onIncrease,
 	onDecrease,
 }: Props) {
+	const selected = quantity > 0;
+	const chilled =
+		item.category.toLowerCase().includes("cold") ||
+		item.name.toLowerCase().includes("cold") ||
+		item.name.toLowerCase().includes("ice");
+
 	return (
 		<Pressable
-			style={{ width: cardWidth }}
 			onPress={() => onIncrease(item)}
-			disabled={quantity > 0}
-			className={`mb-4 overflow-hidden rounded-2xl border bg-white ${
-				quantity > 0 ? "border-brand-blue" : "border-brand-border"
+			className={`mb-3.5 overflow-hidden rounded-2xl border bg-white p-3 ${
+				selected ? "border-cyan-300" : "border-slate-200/90"
 			}`}
+			style={{
+				width: cardWidth,
+				shadowColor: selected ? "#0284C7" : "#000",
+				shadowOpacity: selected ? 0.12 : 0.03,
+				shadowRadius: selected ? 16 : 6,
+				shadowOffset: { width: 0, height: 2 },
+				elevation: selected ? 3 : 1,
+			}}
 		>
-			<View className="h-28 items-center justify-center overflow-hidden bg-brand-surface">
+			<View
+				className={`relative mb-2.5 h-28 items-center justify-center overflow-hidden rounded-xl border ${
+					chilled
+						? "border-cyan-100 bg-cyan-50"
+						: "border-sky-100/80 bg-sky-50"
+				}`}
+			>
 				{item.image ? (
 					<Image
 						source={{ uri: item.image }}
@@ -37,28 +56,59 @@ export default function ProductCard({
 						transition={200}
 					/>
 				) : (
-					<Text className="text-xs text-brand-muted">No image</Text>
+					<Ionicons
+						name={chilled ? "snow-outline" : "cafe-outline"}
+						size={36}
+						color="#0284C7"
+					/>
 				)}
+				{selected ? (
+					<View className="absolute right-2 top-2 h-6 min-w-[24px] items-center justify-center rounded-full bg-white/90 px-1.5">
+						<Text className="text-xs font-bold text-brand-blue">
+							{quantity}
+						</Text>
+					</View>
+				) : null}
 			</View>
 
-			<View className="px-3 py-3">
-				<Text className="text-base font-medium text-brand-dark">
+			<View className="mb-0.5 flex-row items-center gap-1.5">
+				<Text
+					className="flex-1 truncate text-[14px] font-bold tracking-tight text-slate-900"
+					numberOfLines={1}
+				>
 					{item.name}
 				</Text>
-				<Text className="mt-1 text-sm text-brand-muted">
+				{chilled ? (
+					<View className="rounded bg-cyan-100 px-1.5 py-0.5">
+						<Text className="text-[9px] font-bold text-brand-primary">
+							CHILLED
+						</Text>
+					</View>
+				) : null}
+			</View>
+			<Text
+				className="mb-2 text-[11px] text-slate-500"
+				numberOfLines={1}
+			>
+				{item.description?.trim() || "Tap to add to ticket"}
+			</Text>
+
+			<View className="flex-row items-center justify-between border-t border-slate-100 pt-2">
+				<Text className="text-[15px] font-extrabold text-slate-900">
 					{formatRp(item.price)}
 				</Text>
-
-				<View className="mt-3 items-end">
-					{quantity > 0 && (
-						<QuantityStepper
-							quantity={quantity}
-							onIncrease={() => onIncrease(item)}
-							onDecrease={() => onDecrease(item)}
-							size="sm"
-						/>
-					)}
-				</View>
+				{selected ? (
+					<QuantityStepper
+						quantity={quantity}
+						onIncrease={() => onIncrease(item)}
+						onDecrease={() => onDecrease(item)}
+						size="sm"
+					/>
+				) : (
+					<View className="h-7 w-7 items-center justify-center rounded-lg bg-cyan-50">
+						<Ionicons name="add" size={16} color="#0284C7" />
+					</View>
+				)}
 			</View>
 		</Pressable>
 	);

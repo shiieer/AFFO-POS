@@ -8,13 +8,27 @@ type Props = {
 
 export default function AddItemHeader({ title, onClose }: Props) {
 	return (
-		<View className="flex-row items-center border-b border-brand-border bg-white px-3 py-3">
-			<Pressable onPress={onClose} className="p-1">
-				<Ionicons name="close" size={24} color="#111827" />
+		<View className="h-16 flex-row items-center justify-between border-b border-sky-100 bg-white/90 px-4">
+			<Pressable
+				onPress={onClose}
+				className="h-10 w-10 items-center justify-center rounded-full"
+			>
+				<Ionicons name="arrow-back" size={22} color="#475569" />
 			</Pressable>
-			<Text className="mr-8 flex-1 text-center text-lg font-bold text-brand-dark">
-				{title}
-			</Text>
+			<View className="items-center">
+				<Text className="text-lg font-bold tracking-tight text-slate-800">
+					{title}
+				</Text>
+				<Text className="text-[11px] font-semibold uppercase tracking-wider text-sky-600">
+					Menu Catalog
+				</Text>
+			</View>
+			<Pressable
+				onPress={onClose}
+				className="h-10 w-10 items-center justify-center rounded-full"
+			>
+				<Ionicons name="close" size={22} color="#64748B" />
+			</Pressable>
 		</View>
 	);
 }
