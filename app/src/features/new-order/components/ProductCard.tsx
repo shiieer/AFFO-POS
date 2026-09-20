@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+﻿import { View, Text, Pressable } from "react-native";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { formatRp } from "@/utils";
@@ -9,16 +9,20 @@ type Props = {
 	item: MenuItem;
 	cardWidth: number;
 	quantity: number;
+	note?: string;
 	onIncrease: (item: MenuItem) => void;
 	onDecrease: (item: MenuItem) => void;
+	onEditDetail?: (item: MenuItem) => void;
 };
 
 export default function ProductCard({
 	item,
 	cardWidth,
 	quantity,
+	note,
 	onIncrease,
 	onDecrease,
+	onEditDetail,
 }: Props) {
 	const selected = quantity > 0;
 	const chilled =
@@ -92,6 +96,31 @@ export default function ProductCard({
 			>
 				{item.description?.trim() || "Tap to add to ticket"}
 			</Text>
+
+			{selected ? (
+				<Pressable
+					onPress={(e) => {
+						e.stopPropagation?.();
+						onEditDetail?.(item);
+					}}
+					className="mb-2 flex-row items-center gap-1 rounded-md bg-sky-50 px-2 py-1"
+				>
+					<Ionicons
+						name={note ? "document-text" : "add-circle-outline"}
+						size={12}
+						color="#0284C7"
+					/>
+					<Text
+						className="flex-1 text-[10px] font-semibold text-sky-700"
+						numberOfLines={1}
+					>
+						{note || "Add detail"}
+					</Text>
+					{!!note && (
+						<Ionicons name="pencil" size={10} color="#0284C7" />
+					)}
+				</Pressable>
+			) : null}
 
 			<View className="flex-row items-center justify-between border-t border-slate-100 pt-2">
 				<Text className="text-[15px] font-extrabold text-slate-900">

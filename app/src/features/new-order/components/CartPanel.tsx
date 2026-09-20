@@ -1,4 +1,4 @@
-import {
+﻿import {
 	View,
 	Text,
 	Pressable,
@@ -18,6 +18,7 @@ type Props = {
 	onDecrease: (menuItemId: number) => void;
 	onClear: () => void;
 	onSubmit: () => void;
+	onEditDetail?: (item: CartItem) => void;
 };
 
 export default function CartPanel({
@@ -28,6 +29,7 @@ export default function CartPanel({
 	onDecrease,
 	onClear,
 	onSubmit,
+	onEditDetail,
 }: Props) {
 	const hasItems = items.length > 0;
 
@@ -49,10 +51,7 @@ export default function CartPanel({
 				</Pressable>
 			</View>
 
-			<ScrollView
-				className="flex-1 py-3"
-				showsVerticalScrollIndicator={false}
-			>
+			<ScrollView className="flex-1 py-3" showsVerticalScrollIndicator={false}>
 				{hasItems ? (
 					<View className="gap-2.5">
 						{items.map((item) => (
@@ -61,17 +60,14 @@ export default function CartPanel({
 								item={item}
 								onIncrease={onIncrease}
 								onDecrease={onDecrease}
+								onEditDetail={onEditDetail}
 							/>
 						))}
 					</View>
 				) : (
 					<View className="h-48 items-center justify-center">
 						<View className="mb-2 h-12 w-12 items-center justify-center rounded-full bg-slate-50">
-							<Ionicons
-								name="receipt-outline"
-								size={24}
-								color="#CBD5E1"
-							/>
+							<Ionicons name="receipt-outline" size={24} color="#CBD5E1" />
 						</View>
 						<Text className="text-xs font-medium text-slate-500">
 							Ticket is empty
@@ -92,7 +88,7 @@ export default function CartPanel({
 				</View>
 				<View className="mb-3 flex-row items-center justify-between">
 					<Text className="text-[16px] font-extrabold text-slate-900">
-						Total Due
+						Total
 					</Text>
 					<Text className="text-[16px] font-extrabold text-brand-blue">
 						{formatRp(total)}
@@ -120,9 +116,7 @@ export default function CartPanel({
 					) : (
 						<>
 							<Ionicons name="card-outline" size={18} color="#FFFFFF" />
-							<Text className="text-sm font-bold text-white">
-								Charge Order
-							</Text>
+							<Text className="text-sm font-bold text-white">Create Order</Text>
 						</>
 					)}
 				</Pressable>

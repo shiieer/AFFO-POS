@@ -1,4 +1,4 @@
-import { FlatList, Text, View } from "react-native";
+﻿import { FlatList, Text, View } from "react-native";
 import { GRID } from "@/constants/layout";
 import { useGridColumns } from "@/shared/hooks/useGridColumns";
 import { MenuItem } from "@/types/menu";
@@ -8,8 +8,10 @@ type Props = {
 	items: MenuItem[];
 	categoryLabel: string;
 	getItemQuantity: (menuItemId: number) => number;
+	getItemNote?: (menuItemId: number) => string | undefined;
 	onIncreaseItem: (item: MenuItem) => void;
 	onDecreaseItem: (item: MenuItem) => void;
+	onEditDetail?: (item: MenuItem) => void;
 	contentWidth?: number;
 	bottomInset?: number;
 };
@@ -18,8 +20,10 @@ export default function ProductGrid({
 	items,
 	categoryLabel,
 	getItemQuantity,
+	getItemNote,
 	onIncreaseItem,
 	onDecreaseItem,
+	onEditDetail,
 	contentWidth,
 	bottomInset = 24,
 }: Props) {
@@ -63,8 +67,10 @@ export default function ProductGrid({
 					item={item}
 					cardWidth={cardWidth}
 					quantity={getItemQuantity(item.id)}
+					note={getItemNote?.(item.id)}
 					onIncrease={onIncreaseItem}
 					onDecrease={onDecreaseItem}
+					onEditDetail={onEditDetail}
 				/>
 			)}
 		/>

@@ -1,11 +1,14 @@
+﻿import { useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import ScreenContainer from "@/shared/components/ScreenContainer";
 import CategoryFilter from "../components/CategoryFilter";
 import ProductGrid from "../components/ProductGrid";
 import CartPanel from "../components/CartPanel";
 import CartBar from "../components/CartBar";
+import ItemDetailModal from "../components/ItemDetailModal";
 import { useNewOrder } from "../hooks/useNewOrder";
 import { MenuItem } from "@/types/menu";
+import { CartItem } from "../types/cart";
 import Toast from "@/shared/components/Toast";
 import { useOrientationLayout } from "@/shared/hooks/useOrientationLayout";
 
@@ -23,21 +26,56 @@ export default function NewOrderScreen() {
 		cartTotal,
 		menuItems,
 		getItemQuantity,
+		getItemNote,
 		increaseItem,
 		decreaseItem,
+		updateItemNote,
 		clearCart,
 		submitOrder,
 		submitting,
 	} = useNewOrder();
 	const { isLandscape, width } = useOrientationLayout();
+	const [editingItem, setEditingItem] = useState<{
+		menuItemId: number;
+		name: string;
+		note?: string;
+	} | null>(null);
 
 	const handleDecreaseFromMenu = (item: MenuItem) => {
 		decreaseItem(item.id);
 	};
 
+	const handleEditDetailFromMenu = (item: MenuItem) => {
+		setEditingItem({
+			menuItemId: item.id,
+			name: item.name,
+			note: getItemNote(item.id),
+		});
+	};
+
+	const handleEditDetailFromCart = (item: CartItem) => {
+		setEditingItem({
+			menuItemId: item.menuItemId,
+			name: item.name,
+			note: item.note,
+		});
+	};
+
 	const railWidth = isLandscape ? 96 : 0;
 	const sidebarWidth = isLandscape ? 320 : 0;
 	const catalogWidth = Math.max(280, width - railWidth - sidebarWidth);
+
+	const cartActions = {
+		onIncrease: (id: number) => {
+			const item = menuItems.find((menuItem) => menuItem.id === id);
+			if (item) increaseItem(item);
+		},
+		onDecrease: decreaseItem,
+		onUpdateNote: updateItemNote,
+		onEditDetail: handleEditDetailFromCart,
+		onClear: clearCart,
+		onSubmit: submitOrder,
+	};
 
 	const catalog = (
 		<View className="min-w-0 flex-1">
@@ -52,21 +90,13 @@ export default function NewOrderScreen() {
 				contentWidth={catalogWidth}
 				bottomInset={isLandscape ? 24 : cartCount > 0 ? 8 : 24}
 				getItemQuantity={getItemQuantity}
+				getItemNote={getItemNote}
 				onIncreaseItem={increaseItem}
 				onDecreaseItem={handleDecreaseFromMenu}
+				onEditDetail={handleEditDetailFromMenu}
 			/>
 		</View>
 	);
-
-	const cartActions = {
-		onIncrease: (id: number) => {
-			const item = menuItems.find((menuItem) => menuItem.id === id);
-			if (item) increaseItem(item);
-		},
-		onDecrease: decreaseItem,
-		onClear: clearCart,
-		onSubmit: submitOrder,
-	};
 
 	return (
 		<ScreenContainer>
@@ -97,10 +127,18 @@ export default function NewOrderScreen() {
 								itemCount={cartCount}
 								total={cartTotal}
 								submitting={submitting}
-								onSubmit={submitOrder}
+								items={cart}
+								{...cartActions}
 							/>
 						</>
 					)}
+
+					<ItemDetailModal
+						visible={Boolean(editingItem)}
+						item={editingItem}
+						onClose={() => setEditingItem(null)}
+						onSave={(id, note) => updateItemNote(id, note)}
+					/>
 
 					<Toast message={successMessage} type="success" />
 				</>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+﻿import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchMenuApi } from "@/services/api/menu.api";
 import { createOrderApi } from "@/services/api/order.api";
 import { MenuItem } from "@/types/menu";
@@ -51,6 +51,10 @@ export function useNewOrder() {
 		return cart.find((c) => c.menuItemId === menuItemId)?.quantity ?? 0;
 	};
 
+	const getItemNote = (menuItemId: number) => {
+		return cart.find((c) => c.menuItemId === menuItemId)?.note;
+	};
+
 	const increaseItem = (item: MenuItem) => {
 		setSuccessMessage(null);
 		setCart((prev) => {
@@ -87,6 +91,14 @@ export function useNewOrder() {
 		);
 	};
 
+	const updateItemNote = (menuItemId: number, note: string) => {
+		setCart((prev) =>
+			prev.map((c) =>
+				c.menuItemId === menuItemId ? { ...c, note: note || undefined } : c,
+			),
+		);
+	};
+
 	const clearCart = () => {
 		setCart([]);
 	};
@@ -114,6 +126,7 @@ export function useNewOrder() {
 				items: cart.map((item) => ({
 					menu_item_id: item.menuItemId,
 					quantity: item.quantity,
+					notes: item.note ?? null,
 				})),
 			});
 
@@ -139,8 +152,10 @@ export function useNewOrder() {
 		cart,
 		menuItems,
 		getItemQuantity,
+		getItemNote,
 		increaseItem,
 		decreaseItem,
+		updateItemNote,
 		clearCart,
 		submitOrder,
 		submitting,
