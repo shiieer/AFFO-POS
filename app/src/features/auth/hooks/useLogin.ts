@@ -9,7 +9,10 @@ type LoginForm = {
 };
 
 export function useLogin(onSuccess?: () => void) {
-	const [form, setForm] = useState<LoginForm>({ username: "", password: "" });
+	const [form, setForm] = useState<LoginForm>({
+		username: "",
+		password: "",
+	});
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [fieldErrors, setFieldErrors] = useState<
@@ -47,9 +50,12 @@ export function useLogin(onSuccess?: () => void) {
 		setLoading(true);
 		setError(null);
 
+		const raw = form.username.trim();
+		const usernameToSend = raw;
+
 		try {
 			const result = await loginApi({
-				username: form.username.trim(),
+				username: usernameToSend,
 				password: form.password,
 			});
 
@@ -61,6 +67,7 @@ export function useLogin(onSuccess?: () => void) {
 			setLoading(false);
 		}
 	}
+
 	return {
 		form,
 		loading,

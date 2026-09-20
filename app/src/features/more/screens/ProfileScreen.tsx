@@ -1,3 +1,4 @@
+﻿import { useState } from "react";
 import {
 	ActivityIndicator,
 	Pressable,
@@ -7,6 +8,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import ScreenContainer from "@/shared/components/ScreenContainer";
+import LogoutModal from "@/shared/components/LogoutModal";
 import { useProfile } from "../hooks/useProfile";
 import ProfileInfoRow from "../components/ProfileInfoRow";
 
@@ -16,6 +18,7 @@ type Props = {
 
 export default function ProfileScreen({ onBack }: Props) {
 	const { profile, loading, error } = useProfile();
+	const [showLogout, setShowLogout] = useState(false);
 
 	return (
 		<ScreenContainer showHeader={false}>
@@ -218,8 +221,23 @@ export default function ProfileScreen({ onBack }: Props) {
 							Save Changes
 						</Text>
 					</Pressable>
+
+					<Pressable
+						onPress={() => setShowLogout(true)}
+						className="flex-row items-center justify-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 py-3.5 active:scale-[0.99]"
+					>
+						<Ionicons name="log-out-outline" size={20} color="#E11D48" />
+						<Text className="text-base font-semibold text-rose-600">
+							Log Out
+						</Text>
+					</Pressable>
 				</ScrollView>
 			)}
+
+			<LogoutModal
+				visible={showLogout}
+				onClose={() => setShowLogout(false)}
+			/>
 		</ScreenContainer>
 	);
 }

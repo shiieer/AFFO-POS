@@ -1,13 +1,12 @@
-import { useState } from "react";
-import { Alert, ScrollView, Text, View } from "react-native";
-import { clearToken } from "@/services/storage/tokenStorage";
+﻿import { useState } from "react";
+import { ScrollView, Text, View } from "react-native";
 import { MoreDestination, MoreItem } from "../types/more";
-import { notifyUnauthorized } from "@/services/auth/session";
 import MoreOption from "../components/MoreOption";
 import ScreenContainer from "@/shared/components/ScreenContainer";
 import MoreHeader from "../components/MoreHeader";
 import ProfileCard from "../components/ProfileCard";
 import SnapshotGrid from "../components/SnapshotGrid";
+import LogoutModal from "@/shared/components/LogoutModal";
 import { useMoreOverview } from "../hooks/useMoreOverview";
 
 type Props = {
@@ -17,6 +16,7 @@ type Props = {
 export default function MoreScreen({ onNavigate }: Props) {
 	const snapshot = useMoreOverview();
 	const [alertsOn, setAlertsOn] = useState(true);
+	const [showLogout, setShowLogout] = useState(false);
 
 	const operations: MoreItem[] = [
 		{
@@ -66,18 +66,10 @@ export default function MoreScreen({ onNavigate }: Props) {
 		},
 	];
 
-	async function logout() {
-		await clearToken();
-		notifyUnauthorized();
-	}
-
 	function handlePress(item: MoreItem) {
 		if (item.showToggle) return;
 		if (item.key === "logout") {
-			Alert.alert("Logout", "Are you sure you want to logout?", [
-				{ text: "Cancel", style: "cancel" },
-				{ text: "Logout", style: "destructive", onPress: logout },
-			]);
+			setShowLogout(true);
 			return;
 		}
 		if (item.destination) onNavigate(item.destination);
@@ -121,6 +113,11 @@ export default function MoreScreen({ onNavigate }: Props) {
 				{renderSection("Personal", personal)}
 				{renderSection("System", system)}
 			</ScrollView>
+
+			<LogoutModal
+				visible={showLogout}
+				onClose={() => setShowLogout(false)}
+			/>
 		</ScreenContainer>
 	);
 }
