@@ -4,6 +4,7 @@ import AvailabilitySwitch from "@/features/menu/components/AvailabilitySwitch";
 
 type Props = {
 	user: UserApi;
+	onToggleActive?: (value: boolean) => void;
 };
 
 function initials(username: string) {
@@ -20,7 +21,7 @@ function displayName(username: string) {
 		.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-export default function StaffCard({ user }: Props) {
+export default function StaffCard({ user, onToggleActive }: Props) {
 	const isAdmin = user.role === "admin";
 	const active = user.is_active;
 
@@ -116,7 +117,7 @@ export default function StaffCard({ user }: Props) {
 				</View>
 				<AvailabilitySwitch
 					value={active}
-					onValueChange={() => {}}
+					onValueChange={onToggleActive ?? (() => {})}
 				/>
 			</View>
 		</View>

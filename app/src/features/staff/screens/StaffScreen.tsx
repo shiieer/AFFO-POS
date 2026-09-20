@@ -14,7 +14,7 @@ type Props = {
 };
 
 export default function StaffScreen({ onBack }: Props) {
-	const { staff, loading, saving, error, addStaff } = useStaff();
+	const { staff, loading, saving, error, addStaff, toggleActive } = useStaff();
 	const activeCount = staff.filter((user) => user.is_active).length;
 	const [adding, setAdding] = useState(false);
 	const [username, setUsername] = useState("");
@@ -55,6 +55,18 @@ export default function StaffScreen({ onBack }: Props) {
 		}
 	}
 
+	async function handleToggleActive(userId: number, currentActive: boolean) {
+		try {
+			await toggleActive(userId, currentActive);
+			setToast(`Staff set to ${!currentActive ? "Active" : "Inactive"}`);
+		} catch (err) {
+			Alert.alert(
+				"Error",
+				err instanceof Error ? err.message : "Failed to update staff status",
+			);
+		}
+	}
+
 	return (
 		<ScreenContainer showHeader={false}>
 			<StaffHeader onBack={onBack} />
@@ -84,7 +96,12 @@ export default function StaffScreen({ onBack }: Props) {
 							No staff found
 						</Text>
 					}
-					renderItem={({ item }) => <StaffCard user={item} />}
+					renderItem={({ item }) => (
+						<StaffCard
+							user={item}
+							onToggleActive={() => handleToggleActive(item.id, item.is_active)}
+						/>
+					)}
 				/>
 			)}
 

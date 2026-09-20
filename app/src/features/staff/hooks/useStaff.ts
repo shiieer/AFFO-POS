@@ -1,4 +1,8 @@
-import { createUserApi, fetchUsersApi } from "@/services/api/user.api";
+import {
+	createUserApi,
+	fetchUsersApi,
+	updateUserApi,
+} from "@/services/api/user.api";
 import { CreateUserPayload, UserApi } from "@/types/api/user";
 import { getErrorMessage } from "@/utils";
 import { useCallback, useEffect, useState } from "react";
@@ -39,12 +43,32 @@ export function useStaff() {
 		}
 	}
 
+	async function toggleActive(userId: number, currentActive: boolean) {
+		const nextActive = !currentActive;
+		setStaff((prev) =>
+			prev.map((u) => (u.id === userId ? { ...u, is_active: nextActive } : u)),
+		);
+		try {
+			const updated = await updateUserApi(userId, { is_active: nextActive });
+			setStaff((prev) =>
+				prev.map((u) => (u.id === userId ? updated : u)),
+			);
+			return updated;
+		} catch (err) {
+			setStaff((prev) =>
+				prev.map((u) => (u.id === userId ? { ...u, is_active: currentActive } : u)),
+			);
+			throw new Error(getErrorMessage(err, "Failed to update staff status"));
+		}
+	}
+
 	return {
 		staff,
 		loading,
 		saving,
 		error,
 		addStaff,
+		toggleActive,
 		reload: load,
 	};
 }

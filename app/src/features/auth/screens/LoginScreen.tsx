@@ -13,7 +13,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useLogin } from "../hooks/useLogin";
-import { fetchUsersApi } from "@/services/api/user.api";
+import { fetchActiveStaffApi } from "@/services/api/auth.api";
+import { getRecentStaff, StoredStaff } from "@/services/storage/staffStorage";
 import { UserApi } from "@/types/api/user";
 
 type Props = {
@@ -54,20 +55,21 @@ export default function LoginScreen({ onAuthenticated }: Props) {
 	const { form, loading, error, fieldErrors, setField, resetPassword, submit } =
 		useLogin(onAuthenticated);
 
-	const [selectedUser, setSelectedUser] = useState<UserApi | null>(null);
+	const [selectedUser, setSelectedUser] = useState<UserApi | StoredStaff | null>(null);
 	const [showPassword, setShowPassword] = useState(false);
 	const [focusedField, setFocusedField] = useState<string | null>(null);
-	const [staffList, setStaffList] = useState<UserApi[]>([]);
+	const [staffList, setStaffList] = useState<(UserApi | StoredStaff)[]>([]);
 	const [staffLoading, setStaffLoading] = useState(true);
 
 	const loadStaff = useCallback(async () => {
 		try {
 			setStaffLoading(true);
-			const data = await fetchUsersApi();
-			const list = Array.isArray(data) ? data : [];
-			setStaffList(list.filter((u) => u.is_active));
+			const data = await fetchActiveStaffApi();
+			const list = Array.isArray(data) ? data.filter((u) => u.is_active) : [];
+			setStaffList(list);
 		} catch {
-			setStaffList([]);
+			const fallback = await getRecentStaff();
+			setStaffList(fallback);
 		} finally {
 			setStaffLoading(false);
 		}
@@ -77,7 +79,7 @@ export default function LoginScreen({ onAuthenticated }: Props) {
 		loadStaff();
 	}, [loadStaff]);
 
-	const handleSelectUser = (user: UserApi) => {
+	const handleSelectUser = (user: UserApi | StoredStaff) => {
 		setSelectedUser(user);
 		setField("username", user.username);
 	};
@@ -287,14 +289,14 @@ export default function LoginScreen({ onAuthenticated }: Props) {
 								) : (
 									<View style={{ flexDirection: "row", gap: 8 }}>
 										{visibleCrew.map((user, idx) => {
-											const isSelected = selectedUser?.id === user.id;
+											const isSelected = selectedUser?.username === user.username;
 											const palette = getPalette(idx, user.role);
 											const initials = getInitials(user.username);
 											const displayName = getDisplayName(user.username);
 
 											return (
 												<Pressable
-													key={user.id}
+													key={user.username}
 													onPress={() => handleSelectUser(user)}
 													style={{
 														flex: 1,
@@ -342,7 +344,7 @@ export default function LoginScreen({ onAuthenticated }: Props) {
 															width: "100%",
 														}}
 													>
-														{displayName.split(" ")[0]}
+														{displayName}
 													</Text>
 												</Pressable>
 											);

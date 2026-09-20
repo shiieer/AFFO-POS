@@ -11,3 +11,8 @@ export async function fetchMeApi() {
 	const { data } = await api.get<UserApi>("/auth/me");
 	return data;
 }
+
+export async function fetchActiveStaffApi() {
+	const { data } = await api.get<UserApi[]>("/auth/staff");
+	return data;
+}

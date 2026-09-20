@@ -1,5 +1,6 @@
 import { loginApi } from "@/services/api/auth.api";
 import { saveToken } from "@/services/storage/tokenStorage";
+import { saveRecentStaff } from "@/services/storage/staffStorage";
 import { getErrorMessage } from "@/utils";
 import { useState } from "react";
 
@@ -60,6 +61,10 @@ export function useLogin(onSuccess?: () => void) {
 			});
 
 			await saveToken(result.access_token);
+			await saveRecentStaff({
+				username: result.username,
+				role: result.role,
+			});
 			onSuccess?.();
 		} catch (err) {
 			setError(getErrorMessage(err, "Authentication failed"));

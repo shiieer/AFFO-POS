@@ -13,3 +13,9 @@ export type CreateUserPayload = {
 	password: string;
 	role: UserRole;
 };
+
+export type UpdateUserPayload = {
+	is_active?: boolean;
+	role?: UserRole;
+	password?: string;
+};

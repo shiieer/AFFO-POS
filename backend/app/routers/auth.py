@@ -10,13 +10,22 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(payload: LoginRequest, db: DbSession):
-    user = db.query(User).filter(User.username == payload.username).first()
-    if (
-        not user
-        or not user.is_active
-        or not verify_password(payload.password, user.hashed_password)
-    ):
+def login(data: LoginRequest, db: DbSession):
+    user = db.query(User).filter(User.username == data.username).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+        )
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User account is inactive",
+        )
+
+    if not verify_password(data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -29,3 +38,8 @@ def login(payload: LoginRequest, db: DbSession):
 @router.get("/me", response_model=UserOut)
 def me(current_user: CurrentUser):
     return current_user
+
+
+@router.get("/staff", response_model=list[UserOut])
+def get_active_staff(db: DbSession):
+    return db.query(User).filter(User.is_active == True).all()

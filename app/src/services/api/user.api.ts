@@ -1,4 +1,4 @@
-import { CreateUserPayload, UserApi } from "@/types/api/user";
+import { CreateUserPayload, UpdateUserPayload, UserApi } from "@/types/api/user";
 import { api } from "./client";
 
 export async function fetchMeApi() {
@@ -13,5 +13,10 @@ export async function fetchUsersApi() {
 
 export async function createUserApi(payload: CreateUserPayload) {
 	const { data } = await api.post<UserApi>("/users", payload);
+	return data;
+}
+
+export async function updateUserApi(userId: number, payload: UpdateUserPayload) {
+	const { data } = await api.patch<UserApi>(`/users/${userId}`, payload);
 	return data;
 }

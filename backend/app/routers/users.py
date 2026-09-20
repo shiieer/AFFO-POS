@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, status
 from app.core.security import hash_password
 from app.dependencies import AdminUser, DbSession
 from app.models.user import User
-from app.schemas.user import UserCreate, UserOut
+from app.schemas.user import UserCreate, UserOut, UserUpdate
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -25,6 +25,26 @@ def create_user(payload: UserCreate, _: AdminUser, db: DbSession):
         role=payload.role,
     )
     db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+@router.patch("/{user_id}", response_model=UserOut)
+@router.put("/{user_id}", response_model=UserOut)
+def update_user(
+    user_id: int, payload: UserUpdate, _: AdminUser, db: DbSession
+):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    data = payload.model_dump(exclude_unset=True)
+    if "password" in data and data["password"]:
+        user.hashed_password = hash_password(data.pop("password"))
+    for key, value in data.items():
+        setattr(user, key, value)
+
     db.commit()
     db.refresh(user)
     return user

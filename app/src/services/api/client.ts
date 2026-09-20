@@ -33,9 +33,9 @@ api.interceptors.response.use(
 	async (error) => {
 		const status = error.response?.status;
 		const url = String(error.config?.url ?? "");
-		const isLoginRequest = url.includes("/auth/login");
+		const isAuthRequest = url.includes("/auth/");
 
-		if (status === 401 && !isLoginRequest) {
+		if (status === 401 && !isAuthRequest) {
 			await clearToken();
 			notifyUnauthorized();
 		}
