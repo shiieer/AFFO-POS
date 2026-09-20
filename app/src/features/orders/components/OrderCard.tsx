@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { View, Text, Pressable } from "react-native";
+﻿import { useEffect, useState } from "react";
+import { View, Text, Pressable, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { getElapsedSeconds } from "@/utils";
 import { useAppTheme } from "@/shared/theme/ThemeProvider";
@@ -17,6 +17,8 @@ type Props = {
 	onPrint: (orderId: number) => void;
 	onMarkReady: (orderId: number) => void;
 	onMarkServed: (orderId: number) => void;
+	isLandscape?: boolean;
+	cardWidth?: number;
 };
 
 export default function OrderCard({
@@ -26,6 +28,8 @@ export default function OrderCard({
 	onPrint,
 	onMarkReady,
 	onMarkServed,
+	isLandscape,
+	cardWidth,
 }: Props) {
 	const { isDark } = useAppTheme();
 	const [now, setNow] = useState(Date.now());
@@ -42,36 +46,49 @@ export default function OrderCard({
 		<Pressable
 			onPress={onPress}
 			className={`mb-3.5 overflow-hidden rounded-3xl border ${theme.card}`}
-			style={{
-				shadowColor: isDark ? "#000000" : "#0EA5E9",
-				shadowOpacity: isDark ? 0.35 : 0.08,
-				shadowRadius: 16,
-				shadowOffset: { width: 0, height: 4 },
-				elevation: 2,
-			}}
+			style={[
+				{
+					shadowColor: isDark ? "#000000" : "#0EA5E9",
+					shadowOpacity: isDark ? 0.35 : 0.08,
+					shadowRadius: 16,
+					shadowOffset: { width: 0, height: 4 },
+					elevation: 2,
+				},
+				isLandscape
+					? {
+							width: cardWidth,
+							aspectRatio: 4 / 3,
+						}
+					: undefined,
+			]}
 		>
 			<View className={`h-1 ${theme.accent}`} />
 
-			<View className="p-4">
-				<View className="mb-3 flex-row items-start justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
-					<View className="flex-1 pr-3">
-						<View className="flex-row flex-wrap items-center gap-2">
-							<Text className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
+			<View className={isLandscape ? "flex-1 justify-between p-3" : "p-4"}>
+				<View className="mb-2 flex-row items-start justify-between border-b border-slate-100 pb-2 dark:border-slate-800">
+					<View className="flex-1 pr-2">
+						<View className="flex-row flex-wrap items-center gap-1.5">
+							<Text
+								className={`${
+									isLandscape ? "text-base" : "text-lg"
+								} font-bold tracking-tight text-slate-900 dark:text-slate-100`}
+								numberOfLines={1}
+							>
 								{order.title}
 							</Text>
 							{order.tag ? (
 								<View
-									className={`flex-row items-center gap-1 rounded-full border px-2 py-0.5 ${theme.tagWrap}`}
+									className={`flex-row items-center gap-1 rounded-full border px-1.5 py-0.5 ${theme.tagWrap}`}
 								>
 									{showBag ? (
 										<Ionicons
 											name="bag-handle-outline"
-											size={12}
+											size={11}
 											color={theme.tagIcon}
 										/>
 									) : null}
 									<Text
-										className={`font-mono text-[11px] font-bold ${theme.tagText}`}
+										className={`font-mono text-[10px] font-bold ${theme.tagText}`}
 									>
 										{order.tag}
 									</Text>
@@ -79,7 +96,10 @@ export default function OrderCard({
 							) : null}
 						</View>
 
-						<Text className="mt-0.5 font-mono text-xs text-slate-500 dark:text-slate-400">
+						<Text
+							className="mt-0.5 font-mono text-[11px] text-slate-500 dark:text-slate-400"
+							numberOfLines={1}
+						>
 							{order.orderCode} • {order.sourceLabel}
 						</Text>
 					</View>
@@ -96,7 +116,17 @@ export default function OrderCard({
 					</View>
 				</View>
 
-				<OrderItemList items={order.items} />
+				{isLandscape ? (
+					<ScrollView
+						className="my-0.5 flex-1"
+						showsVerticalScrollIndicator={false}
+						nestedScrollEnabled
+					>
+						<OrderItemList items={order.items} compact />
+					</ScrollView>
+				) : (
+					<OrderItemList items={order.items} />
+				)}
 
 				{order.status !== "cancelled" ? (
 					<View onStartShouldSetResponder={() => true}>

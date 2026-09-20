@@ -1,4 +1,4 @@
-import {
+﻿import {
 	ActivityIndicator,
 	FlatList,
 	RefreshControl,
@@ -10,6 +10,7 @@ import OrderStatusFilter from "../components/OrderStatusFilter";
 import { useOrders } from "../hooks/useOrders";
 import OrderCard from "../components/OrderCard";
 import ShiftOverview from "../components/ShiftOverview";
+import { useOrientationLayout } from "@/shared/hooks/useOrientationLayout";
 
 type Props = {
 	onOpenOrder: (orderId: number) => void;
@@ -32,6 +33,21 @@ export default function OrderScreen({ onOpenOrder }: Props) {
 		markServed,
 		printOrder,
 	} = useOrders();
+	const { isLandscape, width } = useOrientationLayout();
+
+	const contentWidth = isLandscape ? Math.max(300, width - 200) : width;
+	const gap = 14;
+	const padding = 16;
+	const numColumns = isLandscape
+		? contentWidth >= 1200
+			? 3
+			: contentWidth >= 850
+				? 3
+				: 2
+		: 1;
+	const cardWidth = isLandscape
+		? (contentWidth - padding * 2 - gap * (numColumns - 1)) / numColumns
+		: undefined;
 
 	return (
 		<ScreenContainer>
@@ -53,10 +69,17 @@ export default function OrderScreen({ onOpenOrder }: Props) {
 				</View>
 			) : (
 				<FlatList
+					key={isLandscape ? `grid-${numColumns}` : "list-1"}
 					className="flex-1"
 					data={orders}
+					numColumns={numColumns}
+					columnWrapperStyle={numColumns > 1 ? { gap } : undefined}
 					keyExtractor={(item) => String(item.id)}
-					contentContainerClassName="px-4 pb-6 pt-3"
+					contentContainerStyle={{
+						paddingHorizontal: padding,
+						paddingTop: 12,
+						paddingBottom: 24,
+					}}
 					showsVerticalScrollIndicator={false}
 					refreshControl={
 						<RefreshControl
@@ -78,6 +101,8 @@ export default function OrderScreen({ onOpenOrder }: Props) {
 							onPrint={printOrder}
 							onMarkReady={markReady}
 							onMarkServed={markServed}
+							isLandscape={isLandscape}
+							cardWidth={cardWidth}
 						/>
 					)}
 				/>

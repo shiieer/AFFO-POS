@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+﻿import { View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { formatRp } from "@/utils";
 import { useAppTheme } from "@/shared/theme/ThemeProvider";
@@ -6,6 +6,7 @@ import { OrderLineItem } from "../types/order";
 
 type Props = {
 	items: OrderLineItem[];
+	compact?: boolean;
 };
 
 function isAlertNote(note: string) {
@@ -20,11 +21,11 @@ function isAlertNote(note: string) {
 	);
 }
 
-export default function OrderItemList({ items }: Props) {
+export default function OrderItemList({ items, compact }: Props) {
 	const { isDark } = useAppTheme();
 
 	return (
-		<View className="gap-2.5 py-3">
+		<View className={compact ? "gap-1.5 py-1" : "gap-2.5 py-3"}>
 			{items.map((item, index) => {
 				const alert = item.note ? isAlertNote(item.note) : false;
 
@@ -53,7 +54,9 @@ export default function OrderItemList({ items }: Props) {
 							</View>
 
 							<View className="flex-1">
-								<Text className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+								<Text
+									className={`${compact ? "text-xs" : "text-sm"} font-semibold text-slate-800 dark:text-slate-100`}
+								>
 									{item.name}
 								</Text>
 								{item.note ? (
@@ -67,14 +70,14 @@ export default function OrderItemList({ items }: Props) {
 										{!alert ? (
 											<Ionicons
 												name="options-outline"
-												size={13}
+												size={12}
 												color={
 													isDark ? "#7DD3FC" : "#0284C7"
 												}
 											/>
 										) : null}
 										<Text
-											className={`text-xs font-medium ${
+											className={`text-[11px] font-medium ${
 												alert
 													? "text-amber-700 dark:text-amber-300"
 													: "text-sky-600 dark:text-sky-400"
